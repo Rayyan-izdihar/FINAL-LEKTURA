@@ -27,6 +27,7 @@ export async function proxy(request) {
     // 1. Halaman login/register: kalau sudah login, tidak perlu ke sini lagi.
     if (pathname === '/login' || pathname === '/register') {
         if (sesi) return alihkan(request, `/dashboard/${sesi.role}`);
+        
         return NextResponse.next();
     }
 

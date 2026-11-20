@@ -11,6 +11,7 @@ function ambilKunci() {
     if (!rahasia) {
         throw new Error('JWT_SECRET belum diisi di .env.local');
     }
+    
     return new TextEncoder().encode(rahasia);
 }
 

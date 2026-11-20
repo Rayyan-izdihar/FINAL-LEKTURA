@@ -16,7 +16,9 @@ export async function POST(request) {
 
     const hasil = await query(
         'SELECT id, nama, email, password_hash, role, aktif FROM users WHERE email = $1',
-        [email.trim().toLowerCase()]
+        [
+            email.trim().toLowerCase()
+        ]
     );
     const user = hasil.rows[0];
 

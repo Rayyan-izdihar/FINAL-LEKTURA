@@ -38,16 +38,18 @@ export async function ambilSesi() {
 // Ini lapisan keamanan kedua: proxy.js hanya menjaga HALAMAN,
 // sedangkan API tetap bisa dipanggil langsung, jadi harus dicek di sini juga.
 export async function cekAkses(roleDiizinkan) {
-  const sesi = await ambilSesi();
-  if (!sesi) {
-    return {
-      error: NextResponse.json({ pesan: 'Silakan login terlebih dahulu' }, { status: 401 }),
-    };
-  }
-  if (!roleDiizinkan.includes(sesi.role)) {
-    return {
-      error: NextResponse.json({ pesan: 'Kamu tidak punya akses ke fitur ini' }, { status: 403 }),
-    };
-  }
-  return { sesi };
+    const sesi = await ambilSesi();
+    if (!sesi) {
+        return {
+            error: NextResponse.json({ pesan: 'Silakan login terlebih dahulu' }, { status: 401 }),
+        };
+    }
+    
+    if (!roleDiizinkan.includes(sesi.role)) {
+        return {
+            error: NextResponse.json({ pesan: 'Kamu tidak punya akses ke fitur ini' }, { status: 403 }),
+        };
+    }
+
+    return { sesi };
 }
