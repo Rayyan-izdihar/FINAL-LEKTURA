@@ -1,8 +1,6 @@
 -- lektura-schema.sql
 -- Jalankan pertama kali pada database PostgreSQL yang masih kosong.
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     nama VARCHAR(100) NOT NULL,
@@ -61,7 +59,8 @@ CREATE TABLE loans (
     tanggal_pengajuan_perpanjangan DATE,
     alasan_perpanjangan TEXT,
     status_denda VARCHAR(20) NOT NULL DEFAULT 'Tidak Ada'
-        CHECK (status_denda IN ('Tidak Ada', 'Tertunggak', 'Lunas'))
+        CHECK (status_denda IN ('Tidak Ada', 'Tertunggak', 'Lunas')),
+    jumlah_denda NUMERIC(12,2) NOT NULL DEFAULT 0 CHECK (jumlah_denda >= 0)
 );
 
 CREATE TABLE reviews (
@@ -72,7 +71,28 @@ CREATE TABLE reviews (
     tanggal_ulasan TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Notification Log System: pengingat jatuh tempo, denda baru, dan keputusan pegawai.
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    loan_id INTEGER REFERENCES loans(id) ON DELETE CASCADE,
+    tipe VARCHAR(30) NOT NULL CHECK (tipe IN (
+        'jatuh_tempo',
+        'denda_baru',
+        'pinjam_disetujui',
+        'pinjam_ditolak',
+        'perpanjangan_disetujui',
+        'perpanjangan_ditolak'
+    )),
+    pesan TEXT NOT NULL,
+    dibaca BOOLEAN NOT NULL DEFAULT FALSE,
+    dibuat_pada TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    -- satu jenis notifikasi hanya boleh muncul sekali per transaksi
+    UNIQUE (loan_id, tipe)
+);
+
 -- Perpanjangan dan status denda disimpan pada loans agar jumlah tabel tetap sederhana.
--- Denda dihitung saat runtime dari tanggal_jatuh_tempo dan denda_per_hari.
+-- Denda dihitung saat runtime dari tanggal_jatuh_tempo dan denda_per_hari,
+-- lalu nominalnya disimpan di jumlah_denda ketika buku dikembalikan.
 -- Perubahan stok saat approve/pengembalian dilakukan secara transaksional di backend.
 -- Middleware Next.js tidak memerlukan tabel tersendiri.
