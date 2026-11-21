@@ -8,7 +8,12 @@ export default function Sampul({ src, judul, className = '' }) {
 
     if (!src || gagal) {
         return (
-            <div className={`flex aspect-[5/7] items-end rounded-sm bg-tinta p-3 font-judul text-sm text-krem ${className}`}>
+            <div className={`relative flex aspect-[5/7] flex-col items-start justify-between rounded-sm bg-tinta p-3 font-judul text-sm text-krem ${className}`}>
+                <img
+                    src="/covers/cover-placeholder.svg"
+                    alt="Sampul belum tersedia"
+                    className="mx-auto mt-4 h-12 w-12 object-contain"
+                />
                 {judul}
             </div>
         );
