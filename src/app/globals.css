@@ -1,1 +1,28 @@
 @import "tailwindcss";
+
+/* Token desain Lektura. Dipakai sebagai kelas Tailwind, contoh: bg-krem, text-tinta, border-garis */
+@theme inline {
+  --color-krem: #f6f3e8;
+  --color-kertas: #fbf9f1;
+  --color-garis: #e3dfcf;
+  --color-tinta: #1f2430;
+  --color-tinta-lembut: #3a3e4a;
+  --color-abu: #666a76;
+  --color-koral: #c94444;
+  --color-koral-tua: #b33a3a;
+
+  --font-judul: var(--font-fraunces), Georgia, serif;
+  --font-isi: var(--font-montserrat), system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-krem);
+  color: var(--color-tinta);
+  font-family: var(--font-isi);
+}
+
+/* Cincin fokus untuk pengguna keyboard */
+:focus-visible {
+  outline: 2px solid var(--color-tinta);
+  outline-offset: 2px;
+}
