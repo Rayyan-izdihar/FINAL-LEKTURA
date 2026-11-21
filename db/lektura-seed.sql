@@ -38,20 +38,20 @@ VALUES  ('Teknologi Informasi', 'TI',  'Buku komputer dan teknologi'),
 
 INSERT INTO books 
     (judul, isbn, penulis, penerbit, tahun_terbit, category_id, stok_total, stok_tersedia, maksimal_pinjam, denda_per_hari, sampul) 
-VALUES  ('Dasar-Dasar Pemrograman Web',      '9786020000001', 'Andi Setiawan',         'Informatika',     2023, 1, 5, 4, 7,  1000, NULL),
-        ('Belajar PostgreSQL',               '9786020000002', 'Budi Raharjo',          'Media Kita',      2022, 1, 4, 4, 7,  1000, NULL),
-        ('Laskar Pelangi',                   '9786020000003', 'Andrea Hirata',         'Bentang Pustaka', 2005, 2, 6, 5, 7,  500,  NULL),
-        ('Bumi',                             '9786020000004', 'Tere Liye',             'Gramedia',        2014, 2, 5, 4, 7,  500,  NULL),
-        ('Atomic Habits',                    '9786020000005', 'James Clear',           'Gramedia',        2019, 3, 3, 2, 7,  1000, NULL),
-        ('Pengantar Sains',                  '9786020000006', 'Dina Maharani',         'Erlangga',        2021, 4, 3, 3, 7,  1000, NULL),  -- tanpa riwayat transaksi
-        ('Algoritma dan Struktur Data',      '9786020000007', 'Rahmat Hidayat',        'Graha Ilmu',      2020, 1, 4, 4, 14, 1000, NULL),
-        ('Hukum Perdata Indonesia',          '9786020000008', 'Sri Wahyuni',           'Sinar Grafika',   2018, 5, 3, 3, 14, 1000, NULL),
-        ('Bumi Manusia',                     '9786020000009', 'Pramoedya Ananta Toer', 'Hasta Mitra',     1980, 2, 2, 0, 7,  500,  NULL),  -- STOK HABIS (tombol pinjam nonaktif)
-        ('Filosofi Teras',                   '9786020000010', 'Henry Manampiring',     'Kompas',          2018, 3, 3, 3, 7,  1000, NULL),
-        ('Fisika Dasar Universitas',         '9786020000011', 'Rina Kusuma',           'Erlangga',        2020, 4, 4, 4, 7,  1000, NULL),
-        ('Pengantar Ilmu Hukum',             '9786020000012', 'Dedi Prasetyo',         'Sinar Grafika',   2017, 5, 2, 1, 14, 1000, NULL),  -- stok sisa 1
-        ('Rekayasa Perangkat Lunak Praktis', '9786020000013', 'Hendra Wijaya',         'Informatika',     2021, 1, 3, 3, 7,  1000, NULL),
-        ('Pemrograman Python untuk Pemula',  '9786020000014', 'Maya Anggraini',        'Elex Media',      2019, 1, 4, 4, 7,  1000, NULL);
+VALUES  ('Dasar-Dasar Pemrograman Web',      '9786020000001', 'Andi Setiawan',         'Informatika',     2023, 1, 5, 4, 7,  1000, '/covers/dasar-dasar-pemrograman-web.svg'),
+        ('Belajar PostgreSQL',               '9786020000002', 'Budi Raharjo',          'Media Kita',      2022, 1, 4, 4, 7,  1000, '/covers/belajar-postgresql.svg'),
+        ('Laskar Pelangi',                   '9786020000003', 'Andrea Hirata',         'Bentang Pustaka', 2005, 2, 6, 5, 7,  500,  '/covers/laskar-pelangi.svg'),
+        ('Bumi',                             '9786020000004', 'Tere Liye',             'Gramedia',        2014, 2, 5, 4, 7,  500,  '/covers/bumi.svg'),
+        ('Atomic Habits',                    '9786020000005', 'James Clear',           'Gramedia',        2019, 3, 3, 2, 7,  1000, '/covers/atomic-habits.svg'),
+        ('Pengantar Sains',                  '9786020000006', 'Dina Maharani',         'Erlangga',        2021, 4, 3, 3, 7,  1000, '/covers/pengantar-sains.svg'),  -- tanpa riwayat transaksi (bisa dihapus)
+        ('Algoritma dan Struktur Data',      '9786020000007', 'Rahmat Hidayat',        'Graha Ilmu',      2020, 1, 4, 4, 14, 1000, '/covers/algoritma-dan-struktur-data.svg'),
+        ('Hukum Perdata Indonesia',          '9786020000008', 'Sri Wahyuni',           'Sinar Grafika',   2018, 5, 3, 3, 14, 1000, '/covers/hukum-perdata-indonesia.svg'),
+        ('Bumi Manusia',                     '9786020000009', 'Pramoedya Ananta Toer', 'Hasta Mitra',     1980, 2, 2, 0, 7,  500,  '/covers/bumi-manusia.svg'),  -- STOK HABIS (tombol pinjam nonaktif)
+        ('Filosofi Teras',                   '9786020000010', 'Henry Manampiring',     'Kompas',          2018, 3, 3, 3, 7,  1000, '/covers/filosofi-teras.svg'),
+        ('Fisika Dasar Universitas',         '9786020000011', 'Rina Kusuma',           'Erlangga',        2020, 4, 4, 4, 7,  1000, '/covers/fisika-dasar-universitas.svg'),
+        ('Pengantar Ilmu Hukum',             '9786020000012', 'Dedi Prasetyo',         'Sinar Grafika',   2017, 5, 2, 1, 14, 1000, '/covers/pengantar-ilmu-hukum.svg'),  -- stok sisa 1
+        ('Rekayasa Perangkat Lunak Praktis', '9786020000013', 'Hendra Wijaya',         'Informatika',     2021, 1, 3, 3, 7,  1000, '/covers/rekayasa-perangkat-lunak-praktis.svg'),
+        ('Pemrograman Python untuk Pemula',  '9786020000014', 'Maya Anggraini',        'Elex Media',      2019, 1, 4, 4, 7,  1000, '/covers/pemrograman-python-untuk-pemula.svg');
 
 
 INSERT INTO announcements 
