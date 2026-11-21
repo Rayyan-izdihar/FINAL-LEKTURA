@@ -70,7 +70,7 @@ export default function Navigasi({ user }) {
                 <Item key={item.href} {...item} />
             ))}
 
-            <div className="md:mt-auto">
+            <div className="md:mb-8 md:mt-auto">
                 {user === null && <Item href="/login" label="Masuk" Ikon={LogIn} aktif={false} />}
 
                 {user && (
