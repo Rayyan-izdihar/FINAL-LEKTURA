@@ -3,15 +3,13 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 import KartuBuku from '@/components/KartuBuku';
-import { kelasInput } from '@/lib/gaya';
+import { kelasInput, kelasChip } from '@/lib/gaya';
 
 const OPSI_URUT = [
     { nilai: 'judul', label: 'Judul A-Z' },
     { nilai: 'tahun', label: 'Tahun terbit terbaru' },
     { nilai: 'rating', label: 'Rating tertinggi' },
 ];
-
-const kelasChip = 'min-h-10 cursor-pointer rounded-full border px-4 text-sm transition-colors';
 
 
 export default function KatalogClient() {

@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import KartuPengumuman from '@/components/KartuPengumuman';
+import { kelasChip } from '@/lib/gaya';
 
 const KATEGORI = ['Operasional', 'Layanan', 'Acara'];
-const kelasChip = 'min-h-10 cursor-pointer rounded-full border px-4 text-sm transition-colors';
 
 export default function DaftarPengumuman() {
     const [daftar, setDaftar] = useState(null);
