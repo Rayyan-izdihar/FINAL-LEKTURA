@@ -4,6 +4,7 @@ import Sampul from '@/components/Sampul';
 import LencanaStatus from '@/components/LencanaStatus';
 import { kelasKartu, kelasTombol } from '@/lib/gaya';
 import { formatRupiah, formatTanggal } from '@/lib/format';
+import { kirimAksi } from '@/lib/aksi';
 
 function teksSisaHari(sisa) {
     if (sisa < 0) return `Terlambat ${-sisa} hari`;
@@ -28,28 +29,19 @@ export default function KartuPinjaman({ pinjaman, onUbah }) {
         setError('');
         setLoading(true);
 
-        try {
-            const res = await fetch(`/api/loans/${pinjaman.id}/perpanjangan`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ alasan }),
-            });
-            const data = await res.json();
+        const res = await kirimAksi(`/api/loans/${pinjaman.id}/perpanjangan`, { alasan })
+        setLoading(false);
 
-            if (!res.ok) {
-                setError(data.pesan);
-                return;
-            }
-
-            setFormTerbuka(false);
-            setAlasan('');
-            onUbah();
-        } catch {
-            setError('Tidak dapat menghubungi server. Coba lagi.');
-        } finally {
-            setLoading(false);
+        if (!res.ok) {
+            setError(res.pesan);
+            return;
         }
+
+        setFormTerbuka(false);
+        setAlasan('');
+        onUbah();
     }
+
 
     return (
         <li className={`${kelasKartu} flex gap-4`}>

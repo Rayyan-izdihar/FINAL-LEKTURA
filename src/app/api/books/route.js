@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { polaCari } from '@/lib/pencarian';
 
 // Pilihan urutan. Teks SQL-nya dipilih dari daftar ini (bukan dari input pengguna langsung),
 // jadi aman dari SQL injection.
@@ -14,7 +15,7 @@ const URUTAN = {
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url);
-        const q = (searchParams.get('q') ?? '').trim().slice(0, 100);
+        const q = (searchParams.get('q') ?? '');
         const kategori = searchParams.get('kategori') ?? '';
         // Object.hasOwn memastikan hanya pilihan di daftar URUTAN yang diterima
         const pilihanUrut = searchParams.get('urut');
@@ -27,7 +28,7 @@ export async function GET(request) {
 
         if (q) {
             // Karakter % dan _ diberi garis miring agar dibaca apa adanya, bukan sebagai pola pencarian.
-            nilai.push(`%${q.replace(/[\\%_]/g, '\\$&')}%`);
+            nilai.push(polaCari(q));
             syarat.push(`(b.judul ILIKE $${nilai.length} OR b.penulis ILIKE $${nilai.length})`);
         }
 

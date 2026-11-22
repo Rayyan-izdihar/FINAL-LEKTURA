@@ -38,20 +38,11 @@ export default function TombolPinjam({ bukuId, stok, akses, onBerhasil }) {
         setLoading(true);
         setHasil(null);
 
-        try {
-            const res = await fetch('/api/loans', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ book_id: bukuId }),
-            });
-            const data = await res.json();
-            setHasil({ ok: res.ok, pesan: data.pesan });
-            if (res.ok) onBerhasil?.();
-        } catch {
-            setHasil({ ok: false, pesan: 'Tidak dapat menghubungi server. Coba lagi.' });
-        } finally {
-            setLoading(false);
-        }
+        const res = await kirimAksi('/api/loans', { book_id: bukuId });
+        setLoading(false);
+
+        setHasil({ ok: res.ok, pesan: res.pesan });
+        if (res.ok) onBerhasil?.();
     }
 
     return (

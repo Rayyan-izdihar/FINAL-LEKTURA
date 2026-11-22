@@ -1,28 +1,36 @@
 @import "tailwindcss";
 
-/* Token desain Lektura. Dipakai sebagai kelas Tailwind, contoh: bg-krem, text-tinta, border-garis */
 @theme inline {
-  --color-krem: #f6f3e8;
-  --color-kertas: #fbf9f1;
-  --color-garis: #e3dfcf;
-  --color-tinta: #1f2430;
-  --color-tinta-lembut: #3a3e4a;
-  --color-abu: #666a76;
-  --color-koral: #c94444;
-  --color-koral-tua: #b33a3a;
+    --color-krem: #f6f3e8;          
+    --color-kertas: #fbf9f1;        
+    --color-garis: #e3dfcf;         
+    --color-tinta: #1f2430;         
+    --color-tinta-lembut: #3a3e4a;  
+    --color-abu: #666a76;           
+    --color-koral: #c94444;         
+    --color-koral-tua: #b33a3a;     
 
-  --font-judul: var(--font-fraunces), Georgia, serif;
-  --font-isi: var(--font-montserrat), system-ui, sans-serif;
+    /* Warna status: hijau = berhasil/aman, kuning = perlu perhatian */
+    --color-hijau: #2f6f55;
+    --color-hijau-muda: #e3efe7;
+    --color-kuning: #7a5c0f;
+    --color-kuning-muda: #f6ecd2;
+
+    /* Bayangan lembut untuk kartu dan panel: kelas shadow-kartu */
+    --shadow-kartu: 0 1px 2px rgb(31 36 48 / 0.04), 0 10px 28px -14px rgb(31 36 48 / 0.22);
+
+    --font-judul: var(--font-fraunces), Georgia, serif;
+    --font-isi: var(--font-montserrat), system-ui, sans-serif;
 }
 
 body {
-  background-color: var(--color-krem);
-  color: var(--color-tinta);
-  font-family: var(--font-isi);
+    background-color: var(--color-krem);
+    color: var(--color-tinta);
+    font-family: var(--font-isi);
 }
 
 /* Cincin fokus untuk pengguna keyboard */
 :focus-visible {
-  outline: 2px solid var(--color-tinta);
-  outline-offset: 2px;
+    outline: 2px solid var(--color-tinta);
+    outline-offset: 2px;
 }
