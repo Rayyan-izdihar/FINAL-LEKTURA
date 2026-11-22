@@ -1,8 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import Navigasi from '@/components/Navigasi';
-import Topbar from '@/components/Topbar';
+import Navigasi from '@/components/layout/Navigasi';
+import Topbar from '@/components/layout/Topbar';
 
 // Kerangka halaman: sidebar (Navigasi) + topbar + isi halaman + baris info kecil di bawah.
 export default function Shell({ children }) {
