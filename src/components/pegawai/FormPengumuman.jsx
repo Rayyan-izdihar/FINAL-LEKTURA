@@ -65,12 +65,12 @@ export default function FormPengumuman({ pengumumanId }) {
             setError(hasil.pesan);
             return;
         }
-        router.push(`/pegawai/pengumuman?pesan=${encodeURIComponent(hasil.pesan)}`);
+        router.push(`/dashboard/pegawai/pengumuman?pesan=${encodeURIComponent(hasil.pesan)}`);
     }
 
     const tautanKembali = (
         <Link
-            href="/pegawai/pengumuman"
+            href="/dashboard/pegawai/pengumuman"
             className="inline-flex items-center gap-1.5 text-sm text-tinta-lembut hover:text-tinta"
         >
             <ArrowLeft size={16} aria-hidden="true" /> Kembali ke daftar pengumuman
@@ -201,7 +201,7 @@ export default function FormPengumuman({ pengumumanId }) {
                 )}
 
                 <div className="flex flex-wrap justify-end gap-2 border-t border-garis pt-5">
-                    <Link href="/pegawai/pengumuman" className={kelasTombol.garis}>
+                    <Link href="/dashboard/pegawai/pengumuman" className={kelasTombol.garis}>
                         Batal
                     </Link>
 

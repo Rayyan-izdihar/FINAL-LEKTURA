@@ -91,12 +91,12 @@ export default function FormBuku({ bukuId }) {
             return;
         }
         // Pesan berhasil dibawa lewat alamat, lalu ditampilkan oleh halaman daftar
-        router.push(`/pegawai/buku?pesan=${encodeURIComponent(hasil.pesan)}`);
+        router.push(`/dashboard/pegawai/buku?pesan=${encodeURIComponent(hasil.pesan)}`);
     }
 
     const tautanKembali = (
         <Link
-            href="/pegawai/buku"
+            href="/dashboard/pegawai/buku"
             className="inline-flex items-center gap-1.5 text-sm text-tinta-lembut hover:text-tinta"
         >
             <ArrowLeft size={16} aria-hidden="true" /> Kembali ke daftar buku
@@ -289,7 +289,7 @@ export default function FormBuku({ bukuId }) {
                     )}
 
                     <div className="mt-6 flex flex-wrap justify-end gap-2 border-t border-garis pt-5">
-                        <Link href="/pegawai/buku" className={kelasTombol.garis}>
+                        <Link href="/dashboard/pegawai/buku" className={kelasTombol.garis}>
                             Batal
                         </Link>
 

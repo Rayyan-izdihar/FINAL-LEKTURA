@@ -14,13 +14,13 @@ import PesanAksi from '@/components/PesanAksi';
 // Pintasan ke halaman kelola (dibuat di bagian berikutnya)
 const PINTASAN = [
     {
-        href: '/pegawai/buku',
+        href: '/dashboard/pegawai/buku',
         ikon: Library,
         judul: 'Kelola buku',
         teks: 'Tambah, ubah, dan hapus koleksi serta stok.',
     },
     {
-        href: '/pegawai/pengumuman',
+        href: '/dashboard/pegawai/pengumuman',
         ikon: Megaphone,
         judul: 'Kelola pengumuman',
         teks: 'Tulis kabar operasional, layanan, dan acara.',

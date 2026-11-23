@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
         }
 
         const hasilBuku = await query(
-            `SELECT b.id, b.judul, b.isbn, b.penulis, b.penerbit, b.tahun_terbit,
+            `SELECT b.id, b.judul, b.isbn, b.penulis, b.category_id, b.penerbit, b.tahun_terbit,
                     b.stok_total, b.stok_tersedia, b.maksimal_pinjam, b.denda_per_hari, b.sampul,
                     c.nama AS kategori
             FROM books b
