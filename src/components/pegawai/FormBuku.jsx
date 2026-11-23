@@ -87,11 +87,11 @@ export default function FormBuku({ bukuId }) {
         setLoading(false);
 
         if (!hasil.ok) {
-            setError(hasil.teks);
+            setError(hasil.pesan);
             return;
         }
         // Pesan berhasil dibawa lewat alamat, lalu ditampilkan oleh halaman daftar
-        router.push(`/pegawai/buku?pesan=${encodeURIComponent(hasil.teks)}`);
+        router.push(`/pegawai/buku?pesan=${encodeURIComponent(hasil.pesan)}`);
     }
 
     const tautanKembali = (
@@ -292,7 +292,7 @@ export default function FormBuku({ bukuId }) {
                         <Link href="/pegawai/buku" className={kelasTombol.garis}>
                             Batal
                         </Link>
-                        
+
                         <button type="submit" disabled={loading} className={kelasTombol.koral}>
                             {loading ? 'Menyimpan...' : ubah ? 'Simpan perubahan' : 'Tambah buku'}
                         </button>

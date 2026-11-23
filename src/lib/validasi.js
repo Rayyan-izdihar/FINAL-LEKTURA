@@ -19,7 +19,7 @@ export function validasiBuku(body, { ubah = false } = {}) {
     const isbn = teks(body?.isbn);
     const penulis = teks(body?.penulis);
     const penerbit = teks(body?.penerbit);
-    const sampul = teks(body?.sampul);
+    const sampul = teks(body?.sampul) || null;
     const tahun = Number(body?.tahun_terbit);
     const kategoriId = Number(body?.category_id);
     const stokTotal = Number(body?.stok_total);

@@ -62,10 +62,10 @@ export default function FormPengumuman({ pengumumanId }) {
         setLoading(false);
 
         if (!hasil.ok) {
-            setError(hasil.teks);
+            setError(hasil.pesan);
             return;
         }
-        router.push(`/pegawai/pengumuman?pesan=${encodeURIComponent(hasil.teks)}`);
+        router.push(`/pegawai/pengumuman?pesan=${encodeURIComponent(hasil.pesan)}`);
     }
 
     const tautanKembali = (
@@ -204,7 +204,7 @@ export default function FormPengumuman({ pengumumanId }) {
                     <Link href="/pegawai/pengumuman" className={kelasTombol.garis}>
                         Batal
                     </Link>
-                    
+
                     <button type="submit" disabled={loading} className={kelasTombol.koral}>
                         {loading ? 'Menyimpan...' : ubah ? 'Simpan perubahan' : 'Simpan pengumuman'}
                     </button>
