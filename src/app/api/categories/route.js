@@ -6,7 +6,13 @@ import { query } from '@/lib/db';
 // (Fungsi POST untuk tambah kategori oleh admin akan ditambahkan di file ini nanti.)
 export async function GET() {
     try {
-        const hasil = await query('SELECT id, nama, kode FROM categories ORDER BY nama ASC');
+        const hasil = await query(
+            `SELECT c.id, c.nama, c.kode, COUNT(c.id) as total_buku
+            FROM categories c
+            JOIN books b ON b.category_id = c.id
+            GROUP BY c.id, c.nama
+            ORDER BY c.nama ASC`
+        );
         return NextResponse.json({ kategori: hasil.rows });
     } catch (error) {
         console.error(error);

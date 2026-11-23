@@ -106,12 +106,18 @@ export default function HalamanRegister() {
                 </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-tinta-lembut">
-                Sudah punya akun?{' '}
-                <Link href="/login" className="font-medium text-tinta underline underline-offset-4">
-                    Masuk
+            <div className="mt-6 space-y-3 text-center text-sm">
+                <p className="text-tinta-lembut">
+                    Sudah punya akun?{' '}
+                    <Link href="/login" className="font-medium text-tinta underline underline-offset-4">
+                        Masuk
+                    </Link>
+                </p>
+
+                <Link href="/" className={`${kelasTombol.garis} w-full`}>
+                    Continue as Guest
                 </Link>
-            </p>
+            </div>
         </div>
     );
 }

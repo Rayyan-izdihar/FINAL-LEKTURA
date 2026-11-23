@@ -145,13 +145,20 @@ export default function KatalogClient() {
                         type="button"
                         aria-pressed={kategori === String(k.id)}
                         onClick={() => ubahParam({ kategori: String(k.id) })}
-                        className={`${kelasChip} ${
+                        className={`inline-flex items-center gap-2 ${kelasChip} ${
                         kategori === String(k.id)
                             ? 'border-tinta bg-tinta text-krem'
                             : 'border-garis bg-kertas hover:border-tinta/40'
                         }`}
                     >
-                        {k.nama}
+                        {k.nama} 
+                        <span
+                            className={`rounded-full px-2 py-0.5 text-xs ${
+                                kategori === String(k.id) ? 'bg-krem/20 text-krem' : 'bg-tinta/10 text-tinta'
+                            }`}
+                        >
+                            {k.total_buku}
+                        </span>
                     </button>
                 ))}
             </div>

@@ -20,7 +20,15 @@ export async function GET(request) {
             [batas]
         );
 
-        return NextResponse.json({ pengumuman: hasil.rows });
+        const kategori = await query(
+            `SELECT kategori, COUNT(id) as jumlah
+            FROM announcements
+            WHERE status = 'Published'
+            GROUP BY kategori
+            ORDER BY kategori ASC`
+        )
+
+        return NextResponse.json({ pengumuman: hasil.rows, kategori: kategori.rows });
     } catch (error) {
         console.error(error);
         return NextResponse.json({ pesan: 'Terjadi kesalahan pada server' }, { status: 500 });

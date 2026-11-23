@@ -31,7 +31,7 @@ export default function Beranda() {
                 <div>
                     <h1 className="font-judul text-4xl leading-tight md:text-5xl">
                         Temukan bacaan
-                        <br className="hidden md:block" /> berikutnya.
+                        <br className="hidden md:block" /> <span className='italic font-isi'>berikutnya.</span>
                     </h1>
                     <p className="mt-4 max-w-md text-tinta-lembut">
                         Telusuri koleksi perpustakaan kampus, ajukan peminjaman, dan pantau jatuh tempo dalam
@@ -62,19 +62,22 @@ export default function Beranda() {
                         </button>
                     </form>
 
-                    <Link href="/katalog" className={`${kelasTombol.garis} mt-4`}>
-                        Jelajahi katalog <ArrowRight size={16} aria-hidden="true" />
+                    <Link href="/katalog" className={`${kelasTombol.gelap} group pr-2 mt-4`}>
+                        Jelajahi katalog
+                        <span className="flex size-7 items-center justify-center rounded-full bg-krem/15 transition-transform group-hover:translate-x-0.5">
+                            <ArrowRight size={16} aria-hidden="true" />
+                        </span>
                     </Link>
                 </div>
 
                 <aside aria-labelledby="judul-pengumuman" className="space-y-3">
                     <div className="flex items-baseline justify-between">
                         <h2 id="judul-pengumuman" className="text-sm font-medium text-abu">
-                        Pengumuman terbaru
+                            Pengumuman terbaru
                         </h2>
 
                         <Link href="/pengumuman" className="text-sm underline underline-offset-4">
-                        Lihat semua
+                            Lihat semua
                         </Link>
                     </div>
 

@@ -13,13 +13,13 @@ const kelasItem =
 const kelasAktif = 'bg-koral text-white';
 const kelasBiasa = 'text-tinta-lembut hover:bg-tinta/5';
 
-function Item({ href, label, Ikon, aktif }) {
+function Item({ href, label, Ikon, aktif, warna }) {
     return (
         <Link
             href={href}
             title={label}
             aria-current={aktif ? 'page' : undefined}
-            className={`${kelasItem} ${aktif ? kelasAktif : kelasBiasa}`}
+            className={`${kelasItem} ${aktif ? kelasAktif : warna || kelasBiasa}`}
         >
             <Ikon size={20} aria-hidden="true" />
             <span className="text-[11px] md:sr-only">{label}</span>
@@ -71,12 +71,24 @@ export default function Navigasi({ user }) {
             ))}
 
             <div className="md:mb-8 md:mt-auto">
-                {user === null && <Item href="/login" label="Masuk" Ikon={LogIn} aktif={false} />}
+                {user === null && (
+                    <Item
+                        href="/login"
+                        label="Masuk"
+                        Ikon={LogIn}
+                        aktif={false}
+                        warna="text-tinta-lembut hover:bg-koral/10 hover:text-koral"
+                    />
+                )}
 
                 {user && (
                     // Logout memakai server action (src/app/actions/auth.js)
                     <form action={logout}>
-                        <button type="submit" title="Keluar" className={`${kelasItem} ${kelasBiasa} cursor-pointer`}>
+                        <button
+                            type="submit"
+                            title="Keluar"
+                            className={`${kelasItem} text-tinta-lembut hover:bg-red-50 hover:text-red-600 cursor-pointer transition-colors`}
+                        >
                             <LogOut size={20} aria-hidden="true" />
                             <span className="text-[11px] md:sr-only">Keluar</span>
                         </button>
