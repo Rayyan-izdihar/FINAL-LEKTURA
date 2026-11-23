@@ -33,7 +33,7 @@ export default function PesanAksi({ pesan, onTutup }) {
                     className={`mt-0.5 shrink-0 ${pesan.ok ? 'text-hijau' : 'text-koral-tua'}`}
                 />
 
-                <p className="flex-1 text-sm text-tinta">{pesan.teks}</p>
+                <p className="flex-1 text-sm text-tinta">{pesan.pesan}</p>
                 
                 <button
                     type="button"

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { kelasTombol } from '@/lib/gaya';
+import { kirimAksi } from '@/lib/aksi';
 
 
 // Tombol "Ajukan Pinjam" di halaman detail buku.

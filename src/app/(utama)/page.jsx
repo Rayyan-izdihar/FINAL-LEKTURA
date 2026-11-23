@@ -51,7 +51,7 @@ export default function Beranda() {
                             name="q"
                             aria-label="Cari buku berdasarkan judul atau pengarang"
                             placeholder="Cari judul atau pengarang..."
-                            className="min-h-12 w-full rounded-full border border-garis bg-kertas pl-10 pr-28 text-sm placeholder:text-abu focus:border-tinta"
+                            className="min-h-12 w-full rounded-full border border-garis bg-kertas pl-10 pr-20 text-sm placeholder:text-abu focus:border-tinta"
                         />
 
                         <button
