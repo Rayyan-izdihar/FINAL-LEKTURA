@@ -67,6 +67,13 @@ export default function KelolaPengumuman() {
     const jumlahPublished = daftar?.filter((p) => p.status === 'Published').length ?? 0;
     const jumlahDraft = daftar?.filter((p) => p.status === 'Draft').length ?? 0;
     const tampil = daftar?.filter((p) => !filter || p.status === filter);
+    const urutanKategori = ['Layanan', 'Operasional', 'Acara'];
+    const kelompokKategori = urutanKategori
+        .map((kategori) => ({
+            nama: kategori,
+            pengumuman: tampil?.filter((p) => p.kategori === kategori) ?? [],
+        }))
+        .filter((kelompok) => kelompok.pengumuman.length > 0);
 
     const daftarFilter = [
         { nilai: '', label: 'Semua', jumlah: daftar?.length ?? 0 },
@@ -145,50 +152,72 @@ export default function KelolaPengumuman() {
             )}
 
             {tampil?.length > 0 && (
-                <ul className="grid gap-4 md:grid-cols-2">
-                    {tampil.map((p) => {
-                        const gaya = gayaKategori(p.kategori);
+                <div className="space-y-9">
+                    {kelompokKategori.map((kelompok) => {
+                        const gaya = gayaKategori(kelompok.nama);
+                        const IkonKategori = gaya.ikon;
 
                         return (
-                            <li key={p.id} className={`${kelasPanel} flex flex-col p-5`}>
-                                <div className="flex flex-wrap items-center justify-between gap-2">
-                                    <StatusPil nada={p.status === 'Published' ? 'hijau' : 'kuning'}>{p.status}</StatusPil>
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        <div className={`rounded-full px-2.5 py-1 text-xs font-medium ${gaya.latar}`}>
-                                            <p className={` ${gaya.teks}`}>
-                                                {p.kategori}
-                                            </p>
+                            <section key={kelompok.nama} aria-labelledby={`kategori-${kelompok.nama.toLowerCase()}`} className="space-y-4">
+                                <div className="flex items-center gap-3 mt-12">
+                                    <div className={`flex size-10 shrink-0 items-center justify-center rounded-xl ${gaya.ubin}`}>
+                                        <IkonKategori size={19} aria-hidden="true" />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <h2 id={`kategori-${kelompok.nama.toLowerCase()}`} className="font-judul text-2xl">
+                                                {kelompok.nama}
+                                            </h2>
+                                            <span className="rounded-full bg-tinta/5 px-2.5 py-1 text-xs text-tinta-lembut">
+                                                {kelompok.pengumuman.length}
+                                            </span>
                                         </div>
-                                        <time dateTime={p.tanggal_rilis} className="text-xs text-abu">
-                                            {formatTanggal(p.tanggal_rilis)}
-                                        </time>
+                                        {/* <div className={`mt-2 h-0.5 w-16 rounded-full ${gaya.bar}`} /> */}
                                     </div>
                                 </div>
 
-                                <h2 className="mt-3 font-judul text-xl leading-snug">{p.judul}</h2>
-                                <p className="mt-1.5 line-clamp-2 text-sm text-tinta-lembut">{p.cuplikan}</p>
-                                <p className="mt-3 text-xs text-abu">Ditulis oleh {p.penulis}</p>
+                                <ul className="grid gap-4 md:grid-cols-2">
+                                    {kelompok.pengumuman.map((p) => (
+                                        <li key={p.id} className={`${kelasPanel} flex flex-col p-5`}>
+                                            <div className="flex flex-wrap items-center justify-between gap-2">
+                                                <StatusPil nada={p.status === 'Published' ? 'hijau' : 'kuning'}>{p.status}</StatusPil>
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <div className="rounded-full border border-garis bg-tinta/5 px-2.5 py-1 text-xs font-medium text-tinta-lembut">
+                                                        <p>{p.kategori}</p>
+                                                    </div>
+                                                    <time dateTime={p.tanggal_rilis} className="text-xs text-abu">
+                                                        {formatTanggal(p.tanggal_rilis)}
+                                                    </time>
+                                                </div>
+                                            </div>
 
-                                <div className="mt-auto flex flex-wrap gap-2 pt-4">
-                                    <Link href={`/dashboard/pegawai/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
-                                        <Pencil size={14} aria-hidden="true" />
-                                        Ubah
-                                    </Link>
-                                    {p.status === 'Published' && (
-                                        <Link href={`/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
-                                            <ExternalLink size={14} aria-hidden="true" />
-                                            Lihat
-                                        </Link>
-                                    )}
-                                    <button type="button" onClick={() => setDihapus(p)} className={kelasHapus}>
-                                        <Trash2 size={14} aria-hidden="true" />
-                                        Hapus
-                                    </button>
-                                </div>
-                            </li>
-                        )
+                                            <h3 className="mt-3 font-judul text-xl leading-snug">{p.judul}</h3>
+                                            <p className="mt-1.5 line-clamp-2 text-sm text-tinta-lembut">{p.cuplikan}</p>
+                                            <p className="mt-3 text-xs text-abu">Ditulis oleh {p.penulis}</p>
+
+                                            <div className="mt-auto flex flex-wrap gap-2 pt-4">
+                                                <Link href={`/dashboard/pegawai/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
+                                                    <Pencil size={14} aria-hidden="true" />
+                                                    Ubah
+                                                </Link>
+                                                {p.status === 'Published' && (
+                                                    <Link href={`/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
+                                                        <ExternalLink size={14} aria-hidden="true" />
+                                                        Lihat
+                                                    </Link>
+                                                )}
+                                                <button type="button" onClick={() => setDihapus(p)} className={kelasHapus}>
+                                                    <Trash2 size={14} aria-hidden="true" />
+                                                    Hapus
+                                                </button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        );
                     })}
-                </ul>
+                </div>
             )}
 
             <Dialog buka={dihapus !== null} onTutup={() => setDihapus(null)} judul="Hapus pengumuman?">

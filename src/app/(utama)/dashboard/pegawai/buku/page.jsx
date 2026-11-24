@@ -6,6 +6,7 @@ import Dialog from '@/components/Dialog';
 import KondisiKosong from '@/components/KondisiKosong';
 import PesanAksi from '@/components/PesanAksi';
 import Sampul from '@/components/Sampul';
+import Paginasi from '@/components/Paginasi';
 import StatusPil from '@/components/StatusPil';
 import { kirimAksi } from '@/lib/aksi';
 import { kelasInput, kelasPanel, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
@@ -24,6 +25,8 @@ export default function KelolaBuku() {
     const [dihapus, setDihapus] = useState(null); // buku yang sedang akan dihapus (dialog terbuka)
     const [loadingHapus, setLoadingHapus] = useState(false);
     const [pesan, setPesan] = useState(null);
+    const [halaman, setHalaman] = useState(1);
+    const [pagination, setPagination] = useState(null);
 
     const tutupPesan = useCallback(() => setPesan(null), []);
 
@@ -45,12 +48,17 @@ export default function KelolaBuku() {
 
     useEffect(() => {
         let dibatalkan = false;
-        fetch('/api/books')
+        const params = new URLSearchParams({ page: String(halaman), limit: '10' });
+        if (cari.trim()) params.set('q', cari.trim());
+        if (filterKategori) params.set('kategori', filterKategori);
+
+        fetch(`/api/books?${params.toString()}`)
             .then(async (res) => {
                 if (!res.ok) throw new Error('gagal');
                 const data = await res.json();
                 if (!dibatalkan) {
-                    setBuku(data.buku);
+                    setBuku(data.buku ?? []);
+                    setPagination(data.pagination ?? null);
                     setGalat('');
                 }
             })
@@ -60,7 +68,7 @@ export default function KelolaBuku() {
         return () => {
             dibatalkan = true;
         };
-    }, [versi]);
+    }, [versi, halaman, cari, filterKategori]);
 
     async function hapus() {
         setLoadingHapus(true);
@@ -73,15 +81,7 @@ export default function KelolaBuku() {
         if (hasil.ok) setVersi((v) => v + 1);
     }
 
-    // Penyaringan dilakukan di browser karena jumlah bukunya sedikit
-    const kataKunci = cari.trim().toLowerCase();
-    const tampil = buku?.filter(
-        (b) =>
-            (!filterKategori || String(b.kategori_id) === filterKategori) &&
-            (!kataKunci || b.judul.toLowerCase().includes(kataKunci) || b.penulis.toLowerCase().includes(kataKunci))
-    );
-
-    const totalEksemplar = buku?.reduce((jumlah, b) => jumlah + b.stok_total, 0) ?? 0;
+    const tampil = buku;
 
     return (
         <div className="space-y-6 py-4 md:py-8">
@@ -97,10 +97,10 @@ export default function KelolaBuku() {
                     <p className="text-xs font-medium uppercase tracking-widest text-abu">Kelola</p>
                     <h1 className="mt-1 font-judul text-3xl md:text-4xl">Koleksi buku</h1>
                     <p className="mt-1 text-sm text-tinta-lembut">
-                        {buku ? `${buku.length} judul, ${totalEksemplar} Stok Katalog` : 'Memuat...'}
+                        {pagination ? `${pagination.total} judul dalam katalog` : 'Memuat koleksi...'}
                     </p>
                 </div>
-                <Link href="/dashboard/pegawai/buku/baru" className={kelasTombol.koral}>
+                <Link href="/dashboard/pegawai/buku/baru" className={kelasTombol.gelap}>
                     <Plus size={16} aria-hidden="true" />
                     Tambah buku
                 </Link>
@@ -116,7 +116,7 @@ export default function KelolaBuku() {
                     <input
                         type="search"
                         value={cari}
-                        onChange={(e) => setCari(e.target.value)}
+                        onChange={(e) => { setCari(e.target.value); setHalaman(1); }}
                         aria-label="Cari judul atau penulis"
                         placeholder="Cari judul atau penulis..."
                         className={`${kelasInput} rounded-full pl-10`}
@@ -124,7 +124,7 @@ export default function KelolaBuku() {
                 </div>
                 <select
                     value={filterKategori}
-                    onChange={(e) => setFilterKategori(e.target.value)}
+                    onChange={(e) => { setFilterKategori(e.target.value); setHalaman(1); }}
                     aria-label="Filter kategori"
                     className="min-h-11 cursor-pointer rounded-full border border-garis bg-kertas px-4 text-sm"
                 >
@@ -160,58 +160,100 @@ export default function KelolaBuku() {
             )}
 
             {tampil?.length > 0 && (
+                <>
                 <ul className="space-y-3">
                     {tampil.map((b) => {
                         const dipinjam = b.stok_total - b.stok_tersedia;
                         const persen = b.stok_total > 0 ? (b.stok_tersedia / b.stok_total) * 100 : 0;
                         const warnaBatang = b.stok_tersedia === 0 ? 'bg-koral' : persen <= 40 ? 'bg-kuning' : 'bg-hijau';
 
-                        return (
+                        return (                            
                             <li
                                 key={b.id}
-                                className={`${kelasPanel} flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:p-5`}
+                                className={`${kelasPanel} grid grid-cols-[64px_minmax(0,1fr)] items-center gap-4 p-4 sm:grid-cols-[76px_minmax(0,1fr)_auto] sm:gap-5 sm:p-5`}
                             >
-                                <Sampul src={b.sampul} judul={b.judul} className="w-14 shrink-0 self-start sm:self-center" />
+                                {/* Sampul */}
+                                <Sampul
+                                    src={b.sampul}
+                                    judul={b.judul}
+                                    className="w-16 shrink-0 sm:w-[76px]"
+                                />
 
-                                <div className="min-w-0 flex-1">
+                                {/* Informasi buku */}
+                                <div className="min-w-0 self-center">
                                     <div className="flex flex-wrap items-center gap-2">
-                                        <h2 className="font-judul text-lg leading-snug">{b.judul}</h2>
+                                        <h2 className="font-judul text-lg font-medium leading-snug">
+                                            {b.judul}
+                                        </h2>
                                         <StatusPil>{b.kategori}</StatusPil>
                                     </div>
-                                    <p className="text-sm text-tinta-lembut">
-                                        {b.penulis}, {b.tahun_terbit}
+
+                                    <p className="mt-1 text-sm text-tinta-lembut">
+                                        {b.penulis} <span className="mx-1 text-abu">·</span> {b.tahun_terbit}
                                     </p>
 
-                                    <div className="mt-3 max-w-xs">
-                                        <div className="flex justify-between text-xs text-tinta-lembut">
-                                            <span>
-                                                Tersedia {b.stok_tersedia} dari {b.stok_total}
+                                    <div className="mt-4 max-w-md">
+                                        <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                                            <span className="text-tinta-lembut">
+                                                Ketersediaan buku
                                             </span>
-                                            {dipinjam > 0 && <span>{dipinjam} dipinjam</span>}
+                                            <span className="font-medium text-tinta">
+                                                {b.stok_tersedia} / {b.stok_total} tersedia
+                                            </span>
                                         </div>
-                                        <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-tinta/10">
+
+                                        <div className="h-1.5 overflow-hidden rounded-full bg-tinta/10">
                                             <div
-                                                className={`h-full rounded-full ${warnaBatang}`}
+                                                className={`h-full rounded-full transition-all ${
+                                                    b.stok_tersedia === 0
+                                                        ? 'bg-koral'
+                                                        : persen <= 40
+                                                        ? 'bg-kuning'
+                                                        : 'bg-hijau'
+                                                }`}
                                                 style={{ width: `${persen}%` }}
                                             />
                                         </div>
+                                        {dipinjam > 0 && (
+                                            <p className="mt-1.5 text-xs text-tinta-lembut">
+                                                {dipinjam} sedang dipinjam
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
-                                <div className="flex shrink-0 gap-2">
-                                    <Link href={`/dashboard/pegawai/buku/${b.id}`} className={kelasTombolKecil.garis}>
+                                {/* Aksi */}
+                                <div className="col-start-2 flex flex-wrap items-center gap-2 sm:col-start-auto sm:justify-end">
+                                    <Link
+                                        href={`/dashboard/pegawai/buku/${b.id}`}
+                                        className={kelasTombolKecil.garis}
+                                    >
                                         <Pencil size={14} aria-hidden="true" />
                                         Ubah
                                     </Link>
-                                    <button type="button" onClick={() => setDihapus(b)} className={kelasHapus}>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setDihapus(b)}
+                                        className={kelasHapus}
+                                    >
                                         <Trash2 size={14} aria-hidden="true" />
                                         Hapus
                                     </button>
                                 </div>
                             </li>
+
                         );
                     })}
                 </ul>
+                <Paginasi
+                    halaman={pagination?.halaman ?? halaman}
+                    totalHalaman={pagination?.totalHalaman ?? 1}
+                    total={pagination?.total ?? tampil.length}
+                    limit={pagination?.limit ?? 8}
+                    onUbah={setHalaman}
+                />
+                </>
             )}
 
             <Dialog buka={dihapus !== null} onTutup={() => setDihapus(null)} judul="Hapus buku?">

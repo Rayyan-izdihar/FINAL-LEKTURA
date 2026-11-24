@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search } from 'lucide-react';
 import KartuBuku from '@/components/KartuBuku';
-import { kelasInput, kelasChip } from '@/lib/gaya';
+import Paginasi from '@/components/Paginasi';
+import { kelasInput, kelasChip, kelasTombol } from '@/lib/gaya';
 
 const OPSI_URUT = [
     { nilai: 'judul', label: 'Judul A-Z' },
@@ -21,12 +22,17 @@ export default function KatalogClient() {
     const q = params.get('q') ?? '';
     const kategori = params.get('kategori') ?? '';
     const urut = params.get('urut') ?? 'judul';
-    const kunci = params.toString();
+    const halaman = Math.max(1, Number.parseInt(params.get('page') ?? '1', 10) || 1);
+    const kunci = new URLSearchParams(params.toString());
+    kunci.set('page', String(halaman));
+    kunci.set('limit', '15');
+    const kunciFetch = kunci.toString();
 
     const [buku, setBuku] = useState([]);
     const [daftarKategori, setDaftarKategori] = useState([]);
     const [loading, setLoading] = useState(true);
     const [galat, setGalat] = useState(false);
+    const [pagination, setPagination] = useState(null);
 
 
     // Kategori untuk tombol filter, diambil sekali.
@@ -43,11 +49,15 @@ export default function KatalogClient() {
         setLoading(true);
         setGalat(false);
 
-        fetch(`/api/books?${kunci}`)
-            .then((res) => res.json())
+        fetch(`/api/books?${kunciFetch}`)
+            .then((res) => {
+                if (!res.ok) throw new Error('Gagal memuat katalog');
+                return res.json();
+            })
             .then((data) => {
                 if (!dibatalkan) {
                     setBuku(data.buku ?? []);
+                    setPagination(data.pagination ?? null);
                     setLoading(false);
                 }
             })
@@ -61,7 +71,7 @@ export default function KatalogClient() {
         return () => {
             dibatalkan = true;
         };
-    }, [kunci]);
+    }, [kunciFetch]);
 
 
     // Ubah satu atau beberapa parameter URL. Nilai kosong berarti parameter dihapus.
@@ -71,6 +81,10 @@ export default function KatalogClient() {
         for (const [nama, nilai] of Object.entries(perubahan)) {
             if (nilai) baru.set(nama, nilai);
             else baru.delete(nama);
+        }
+
+        if (['q', 'kategori', 'urut'].some((nama) => Object.hasOwn(perubahan, nama)) && !Object.hasOwn(perubahan, 'page')) {
+            baru.delete('page');
         }
 
         const teks = baru.toString();
@@ -88,7 +102,7 @@ export default function KatalogClient() {
             <div>
                 <h1 className="font-judul text-3xl md:text-4xl">Katalog buku</h1>
                 <p className="mt-1 text-sm text-tinta-lembut">
-                    {loading ? 'Memuat...' : `${buku.length} buku ditemukan`}
+                    {loading ? 'Memuat...' : `${pagination?.total ?? buku.length} buku ditemukan`}
                 </p>
             </div>
 
@@ -115,7 +129,7 @@ export default function KatalogClient() {
                     <span className="text-tinta-lembut">Urutkan</span>
                     <select
                         value={urut}
-                        onChange={(e) => ubahParam({ urut: e.target.value === 'judul' ? '' : e.target.value })}
+                        onChange={(e) => ubahParam({ urut: e.target.value === 'judul' ? '' : e.target.value, page: '' })}
                         className="min-h-11 cursor-pointer rounded-full border border-garis bg-kertas px-4 text-sm"
                     >
                         {OPSI_URUT.map((opsi) => (
@@ -131,7 +145,7 @@ export default function KatalogClient() {
                 <button
                     type="button"
                     aria-pressed={kategori === ''}
-                    onClick={() => ubahParam({ kategori: '' })}
+                    onClick={() => ubahParam({ kategori: '', page: '' })}
                     className={`${kelasChip} ${
                         kategori === '' ? 'border-tinta bg-tinta text-krem' : 'border-garis bg-kertas hover:border-tinta/40'
                     }`}
@@ -144,7 +158,7 @@ export default function KatalogClient() {
                         key={k.id}
                         type="button"
                         aria-pressed={kategori === String(k.id)}
-                        onClick={() => ubahParam({ kategori: String(k.id) })}
+                        onClick={() => ubahParam({ kategori: String(k.id), page: '' })}
                         className={`inline-flex items-center gap-2 ${kelasChip} ${
                         kategori === String(k.id)
                             ? 'border-tinta bg-tinta text-krem'
@@ -177,19 +191,28 @@ export default function KatalogClient() {
                     <button
                         type="button"
                         onClick={() => router.push('/katalog')}
-                        className="mt-4 text-sm underline underline-offset-4"
+                        className={`mt-2 ${kelasTombol.gelap}`}
                     >
                         Hapus semua filter
                     </button>
                 </div>
             )}
 
-            {buku.length > 0 && (
-                <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                    {buku.map((item) => (
-                        <KartuBuku key={item.id} buku={item} />
-                    ))}
-                </div>
+            {!loading && buku.length > 0 && (
+                <>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        {buku.map((item) => (
+                            <KartuBuku key={item.id} buku={item} />
+                        ))}
+                    </div>
+                    <Paginasi
+                        halaman={pagination?.halaman ?? halaman}
+                        totalHalaman={pagination?.totalHalaman ?? 1}
+                        total={pagination?.total ?? buku.length}
+                        limit={pagination?.limit ?? 10}
+                        onUbah={(nomor) => ubahParam({ page: String(nomor) })}
+                    />
+                </>
             )}
         </div>
     );
