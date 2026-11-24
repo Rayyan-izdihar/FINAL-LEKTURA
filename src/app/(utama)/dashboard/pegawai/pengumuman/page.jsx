@@ -98,7 +98,7 @@ export default function KelolaPengumuman() {
                         Kabar operasional, layanan, dan acara perpustakaan.
                     </p>
                 </div>
-                <Link href="/dashboard/pegawai/pengumuman/baru" className={kelasTombol.koral}>
+                <Link href="/dashboard/pegawai/pengumuman/baru" className={kelasTombol.gelap}>
                     <Plus size={16} aria-hidden="true" />
                     Tulis pengumuman
                 </Link>

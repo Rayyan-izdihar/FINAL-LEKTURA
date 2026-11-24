@@ -123,7 +123,7 @@ export default function DetailBuku() {
                         Belum ada ulasan. Ulasan dapat ditulis setelah buku selesai dipinjam.
                     </p>
                     ) : (
-                    <ul className="mt-4 grid gap-4 md:grid-cols-2">
+                    <ul className="mt-4 grid gap-4 md:grid-cols-2 max-h-screen overflow-y-auto">
                         {ulasan.map((u) => (
                         <li key={u.id} className="rounded-2xl border border-garis bg-kertas p-5">
                             <div className="flex items-center justify-between gap-3">
