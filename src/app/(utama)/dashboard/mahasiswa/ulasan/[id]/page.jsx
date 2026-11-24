@@ -5,7 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import Sampul from '@/components/Sampul';
 import PilihBintang from '@/components/PilihBintang';
+import { formatTanggal } from '@/lib/format';
 import { kelasTombol } from '@/lib/gaya';
+
+const BATAS = 500;
 
 export default function HalamanUlasan() {
     const { id } = useParams(); // nomor transaksi dari alamat, contoh /dashboard/mahasiswa/ulasan/3
@@ -101,56 +104,86 @@ export default function HalamanUlasan() {
               : '';
 
     return (
-        <div className="py-4 md:py-8">
+        <div className="mx-auto max-w-5xl py-4 md:py-8">
             {tautanKembali}
 
-            <div className="mt-6 max-w-lg">
-                <h1 className="font-judul text-3xl">Tulis ulasan</h1>
+            <div className="mt-6 grid gap-3 rounded-3xl border border-garis bg-kertas py-4 pl-4 shadow-kartu lg:grid-cols-[auto_minmax(0,1fr)]">
+                {/* Kiri: buku yang diulas. Lebarnya mengikuti sampul (lg:w-56), sisanya untuk formulir. */}
+                <aside className="bg-tinta px-8 py-10 text-krem lg:px-10 rounded-3xl">
+                    <div className="mx-auto flex flex-col items-center gap-6 text-center lg:mx-0 lg:w-56 lg:items-start lg:text-left">
+                        <Sampul
+                            src={pinjaman.sampul}
+                            judul={pinjaman.judul}
+                            className="w-36 ring-1 ring-krem/15 sm:w-44 lg:w-full"
+                        />
 
-                <div className="mt-5 flex items-center gap-4">
-                    <Sampul src={pinjaman.sampul} judul={pinjaman.judul} className="w-16 shrink-0" />
-                    <div>
-                        <p className="font-medium leading-snug">{pinjaman.judul}</p>
-                        <p className="text-sm text-tinta-lembut">{pinjaman.penulis}</p>
-                    </div>
-                </div>
-
-                {tidakBisa ? (
-                    <p className="mt-8 rounded-xl border border-garis bg-kertas px-4 py-3 text-sm">
-                        {tidakBisa}
-                    </p>
-                ) : (
-                    <form onSubmit={kirim} className="mt-8 space-y-5">
                         <div>
-                            <span className="mb-1 block text-sm font-medium">Rating</span>
-                            <PilihBintang nilai={rating} onUbah={setRating} />
-                        </div>
+                            <p className="font-judul text-2xl leading-tight">{pinjaman.judul}</p>
+                            <p className="mt-1 text-krem/70">{pinjaman.penulis}</p>
 
-                        <label className="block">
-                            <span className="mb-1.5 block text-sm font-medium">
-                                Ulasan (opsional)
-                            </span>
-                            <textarea
-                                value={ulasan}
-                                onChange={(e) => setUlasan(e.target.value)}
-                                maxLength={500}
-                                rows={4}
-                                placeholder="Ceritakan pendapatmu tentang buku ini..."
-                                className="w-full rounded-xl border border-garis bg-kertas px-4 py-2.5 text-sm placeholder:text-abu focus:border-tinta"
-                            />
-                        </label>
-
-                        {error && (
-                            <p role="alert" className="rounded-xl bg-koral/10 px-4 py-3 text-sm text-koral-tua">
-                                {error}
+                            {pinjaman.tanggal_kembali && (
+                                <p className="mt-5 border-t border-krem/15 pt-4 text-sm text-krem/70">
+                                    Dikembalikan {formatTanggal(pinjaman.tanggal_kembali)}
+                                </p>
+                            )}
+                            <p className="mt-4 text-sm text-krem/70">
+                                Ulasanmu membantu mahasiswa lain memilih buku.
                             </p>
-                        )}
+                        </div>
+                    </div>
+                </aside>
 
-                        <button type="submit" disabled={loading} className={kelasTombol.koral}>
-                            {loading ? 'Menyimpan...' : 'Kirim ulasan'}
-                        </button>
-                    </form>
-                )}
+                {/* Kanan: formulir */}
+                <section className="bg-kertas px-6 py-8 sm:px-10 sm:py-10">
+                    <h1 className="font-judul text-3xl">Tulis ulasan</h1>
+                    <p className="mt-1 text-sm text-tinta-lembut">Bagaimana pendapatmu tentang buku ini?</p>
+
+                    {tidakBisa ? (
+                        <p className="mt-8 rounded-xl border border-garis bg-krem px-4 py-3 text-sm">
+                            {tidakBisa}
+                        </p>
+                    ) : (
+                        <form onSubmit={kirim} className="mt-8 space-y-7">
+                            <div>
+                                <span className="mb-2 block text-sm font-medium">Rating</span>
+                                <PilihBintang nilai={rating} onUbah={setRating} />
+                            </div>
+
+                            <div>
+                                <label htmlFor="ulasan" className="mb-1.5 block text-sm font-medium">
+                                    Ulasan (opsional)
+                                </label>
+                                <textarea
+                                    id="ulasan"
+                                    value={ulasan}
+                                    onChange={(e) => setUlasan(e.target.value)}
+                                    maxLength={BATAS}
+                                    rows={6}
+                                    placeholder="Ceritakan pendapatmu tentang buku ini..."
+                                    className="w-full rounded-xl border border-garis bg-white/60 px-4 py-3 text-sm placeholder:text-abu focus:border-tinta"
+                                />
+                                <p className="mt-1 text-right text-xs text-abu">
+                                    {ulasan.length}/{BATAS}
+                                </p>
+                            </div>
+
+                            {error && (
+                                <p role="alert" className="rounded-xl bg-koral/10 px-4 py-3 text-sm text-koral-tua">
+                                    {error}
+                                </p>
+                            )}
+
+                            <div className="flex flex-wrap items-center gap-3 border-t border-garis pt-6">
+                                <button type="submit" disabled={loading} className={kelasTombol.koral}>
+                                    {loading ? 'Menyimpan...' : 'Kirim ulasan'}
+                                </button>
+                                <Link href="/dashboard/mahasiswa" className={kelasTombol.garis}>
+                                    Batal
+                                </Link>
+                            </div>
+                        </form>
+                    )}
+                </section>
             </div>
         </div>
     );

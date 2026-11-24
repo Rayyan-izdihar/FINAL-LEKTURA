@@ -33,6 +33,14 @@ export default function FormBuku({ bukuId }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Pratinjau sampul menunggu 0,5 detik setelah pegawai berhenti mengetik,
+    // supaya tidak berkedip dan tidak memuat gambar di setiap huruf.
+    const [sampulPratinjau, setSampulPratinjau] = useState('');
+    useEffect(() => {
+        const tunggu = setTimeout(() => setSampulPratinjau(form.sampul.trim()), 500);
+        return () => clearTimeout(tunggu);
+    }, [form.sampul]);
+
 
     // Daftar kategori untuk pilihan
     useEffect(() => {
@@ -304,7 +312,7 @@ export default function FormBuku({ bukuId }) {
                     <p className="text-sm font-medium">Pratinjau sampul</p>
 
                     <div className="mt-4 flex justify-center">
-                        <Sampul src={form.sampul} judul={form.judul || 'Judul buku'} className="w-40" />
+                        <Sampul src={sampulPratinjau} judul={form.judul || 'Judul buku'} className="w-40" />
                     </div>
 
                     <p className="mt-4 text-xs text-abu">
