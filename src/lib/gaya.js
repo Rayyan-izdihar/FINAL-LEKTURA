@@ -1,4 +1,3 @@
-
 const dasarTombol =
     'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60';
 
@@ -29,3 +28,18 @@ export const kelasKartu = 'rounded-2xl border border-garis bg-kertas p-5';
 export const kelasPanel = 'rounded-2xl border border-garis bg-kertas shadow-kartu';
 
 export const kelasChip = 'min-h-10 cursor-pointer rounded-full border px-4 text-sm transition-colors';
+
+
+// ---- Baris daftar di dashboard pegawai (antrean, sirkulasi, denda) ----
+// Sampul + isi di kiri, "slip" aksi di kanan (dipisah garis putus-putus).
+export const kelasBaris = `${kelasPanel} flex flex-col gap-4 p-4 sm:flex-row sm:gap-5 sm:p-5`;
+
+export const kelasAksi =
+    'flex shrink-0 gap-2 border-t border-dashed border-garis pt-4 sm:w-52 sm:flex-col sm:justify-center sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0';
+
+// Tombol di dalam slip: berbagi lebar di HP, penuh ke samping di layar lebar
+export const kelasTombolAksi = 'flex-1 sm:w-full sm:flex-none';
+
+// Pil kecil berisi avatar + nama + NIM peminjam
+export const kelasPeminjam =
+    'inline-flex items-center gap-2 rounded-full border border-garis bg-krem py-1 pl-1 pr-3 text-sm';

@@ -92,7 +92,7 @@ export default function Beranda() {
                 </div>
 
                 {/* Ilustrasi hiasan (public/ilustrasi/rak-buku.svg) dengan info jam buka di pojoknya */}
-                <div className="relative rounded-3xl bg-kuning-muda p-4 sm:p-6">
+                <div className="relative rounded-[2rem] bg-kuning-muda p-4 sm:p-6">
                     <img src="/rak-buku.svg" alt="" className="h-auto w-full" />
                     <p className="absolute bottom-4 left-4 inline-flex items-center gap-2 rounded-full bg-kertas px-4 py-2 text-xs shadow-kartu sm:bottom-6 sm:left-6">
                         <Clock size={14} aria-hidden="true" className="text-hijau" />

@@ -8,7 +8,7 @@ import Sampul from '@/components/Sampul';
 import StatusPil from '@/components/StatusPil';
 import { kirimAksi } from '@/lib/aksi';
 import { formatRupiah, formatTanggal } from '@/lib/format';
-import { kelasInput, kelasPanel, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
+import { kelasAksi, kelasBaris, kelasInput, kelasPeminjam, kelasTombol, kelasTombolAksi, kelasTombolKecil } from '@/lib/gaya';
 
 
 // Label jatuh tempo: hijau kalau masih lama, kuning kalau dekat, merah kalau terlambat
@@ -109,7 +109,7 @@ export default function MejaSirkulasi({ versi, onSelesai }) {
             {daftar === null && (
                 <div className="space-y-3">
                     {[1, 2, 3].map((n) => (
-                        <div key={n} className="h-24 animate-pulse rounded-2xl bg-garis/60" />
+                        <div key={n} className="h-36 animate-pulse rounded-2xl bg-garis/60" />
                     ))}
                 </div>
             )}
@@ -125,44 +125,43 @@ export default function MejaSirkulasi({ versi, onSelesai }) {
             {daftar?.length > 0 && (
                 <ul className="space-y-3">
                     {daftar.map((item) => (
-                        <li
-                            key={item.id}
-                            className={`${kelasPanel} flex flex-col gap-4 p-4 sm:flex-row sm:items-center`}
-                        >
-                            <Sampul src={item.sampul} judul={item.judul} className="w-12 shrink-0 self-start sm:self-center" />
+                        <li key={item.id} className={kelasBaris}>
+                            <Sampul src={item.sampul} judul={item.judul} className="w-16 shrink-0 self-start sm:w-20" />
 
                             <div className="min-w-0 flex-1">
-                                <p className="font-medium leading-snug">{item.judul}</p>
-
-                                <div className="mt-1 flex items-center gap-2 text-sm text-tinta-lembut">
-                                    <Avatar nama={item.nama} ukuran={22} />
-                                    <span>{item.nama}</span>
+                                <span className={kelasPeminjam}>
+                                    <Avatar nama={item.nama} ukuran={26} />
+                                    <span className="font-medium">{item.nama}</span>
                                     <span className="text-xs text-abu">{item.nim}</span>
-                                </div>
+                                </span>
 
-                                <div className="mt-2 flex flex-wrap items-center gap-2">
+                                <h3 className="mt-2 font-judul text-lg leading-snug">{item.judul}</h3>
+
+                                <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
                                     <PilJatuhTempo sisa={item.sisa_hari} />
 
                                     <span className="text-xs text-abu">
                                         Jatuh tempo {formatTanggal(item.tanggal_jatuh_tempo)}
                                     </span>
-
-                                    {item.denda > 0 && (
-                                        <span className="text-xs font-medium text-koral-tua">
-                                            Denda berjalan {formatRupiah(item.denda)}
-                                        </span>
-                                    )}
                                 </div>
+
+                                {item.denda > 0 && (
+                                    <p className="mt-3 inline-block rounded-xl bg-koral/10 px-3 py-1.5 text-sm font-medium text-koral-tua">
+                                        Denda berjalan {formatRupiah(item.denda)}
+                                    </p>
+                                )}
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() => bukaDialog(item)}
-                                className={`${kelasTombolKecil.gelap} shrink-0`}
-                            >
-                                <Undo2 size={14} aria-hidden="true" />
-                                Proses pengembalian
-                            </button>
+                            <div className={kelasAksi}>
+                                <button
+                                    type="button"
+                                    onClick={() => bukaDialog(item)}
+                                    className={`${kelasTombolKecil.gelap} ${kelasTombolAksi}`}
+                                >
+                                    <Undo2 size={14} aria-hidden="true" />
+                                    Proses pengembalian
+                                </button>
+                            </div>
                         </li>
                     ))}
                 </ul>

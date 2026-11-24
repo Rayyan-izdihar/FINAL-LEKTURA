@@ -4,10 +4,11 @@ import { HandCoins, Search, X } from 'lucide-react';
 import Avatar from '@/components/Avatar';
 import Dialog from '@/components/Dialog';
 import KondisiKosong from '@/components/KondisiKosong';
+import Sampul from '@/components/Sampul';
 import StatusPil from '@/components/StatusPil';
 import { kirimAksi } from '@/lib/aksi';
 import { formatRupiah, formatTanggal } from '@/lib/format';
-import { kelasInput, kelasPanel, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
+import { kelasAksi, kelasBaris, kelasInput, kelasPeminjam, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
 
 
 // Daftar denda tertunggak. Pelunasan hanya bisa dicatat untuk buku yang sudah dikembalikan,
@@ -93,7 +94,7 @@ export default function PelunasanDenda({ versi, onSelesai, onKeSirkulasi }) {
             {daftar === null && (
                 <div className="space-y-3">
                     {[1, 2].map((n) => (
-                        <div key={n} className="h-24 animate-pulse rounded-2xl bg-garis/60" />
+                        <div key={n} className="h-36 animate-pulse rounded-2xl bg-garis/60" />
                     ))}
                 </div>
             )}
@@ -112,44 +113,54 @@ export default function PelunasanDenda({ versi, onSelesai, onKeSirkulasi }) {
                         const sudahKembali = item.status === 'Selesai';
 
                         return (
-                            <li
-                                key={item.id}
-                                className={`${kelasPanel} flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:p-5`}
-                            >
-                                <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-2.5">
-                                        <Avatar nama={item.nama} ukuran={30} />
-                                        <span className="font-medium">{item.nama}</span>
-                                        <span className="text-xs text-abu">{item.nim}</span>
-                                    </div>
+                            <li key={item.id} className={kelasBaris}>
+                                <Sampul src={item.sampul} judul={item.judul} className="w-16 shrink-0 self-start sm:w-20" />
 
-                                    <p className="mt-2 text-sm text-tinta-lembut">
-                                        {item.judul}, terlambat {item.hari_terlambat} hari
-                                        {sudahKembali && ` (dikembalikan ${formatTanggal(item.tanggal_kembali)})`}
+                                <div className="min-w-0 flex-1">
+                                    {sudahKembali ? (
+                                        <StatusPil nada="hijau">Sudah dikembalikan</StatusPil>
+                                    ) : (
+                                        <StatusPil nada="kuning">Belum dikembalikan, denda masih bertambah</StatusPil>
+                                    )}
+
+                                    <h3 className="mt-2 font-judul text-lg leading-snug">{item.judul}</h3>
+
+                                    <p className="text-sm text-koral mt-1">
+                                        Terlambat {item.hari_terlambat} hari
+                                        {sudahKembali && `, dikembalikan ${formatTanggal(item.tanggal_kembali)}`}
                                     </p>
 
-                                    <div className="mt-2">
-                                        {sudahKembali ? (
-                                            <StatusPil nada="hijau">Sudah dikembalikan</StatusPil>
-                                        ) : (
-                                            <StatusPil nada="kuning">Belum dikembalikan, denda masih bertambah</StatusPil>
-                                        )}
+                                    <div className="mt-3">
+                                        <span className={kelasPeminjam}>
+                                            <Avatar nama={item.nama} ukuran={26} />
+                                            <span className="font-medium">{item.nama}</span>
+                                            <span className="text-xs text-abu">{item.nim}</span>
+                                        </span>
                                     </div>
                                 </div>
 
-                                <div className="flex shrink-0 items-center justify-between gap-4 sm:flex-col sm:items-end">
-                                    <p className="font-judul text-2xl text-koral-tua">{formatRupiah(item.nominal)}</p>
+                                <div className={`${kelasAksi} items-center sm:items-stretch`}>
+                                    <div className="flex-1 sm:flex-none sm:text-center">
+                                        <p className="text-xs text-abu">Total denda</p>
+                                        <p className="font-judul text-2xl leading-tight text-koral-tua">
+                                            {formatRupiah(item.nominal)}
+                                        </p>
+                                    </div>
 
                                     {sudahKembali ? (
                                         <button
                                             type="button"
                                             onClick={() => setDipilih(item)}
-                                            className={kelasTombolKecil.hijau}
+                                            className={`${kelasTombolKecil.hijau} sm:w-full mt-2`}
                                         >
                                             Catat pelunasan
                                         </button>
                                     ) : (
-                                        <button type="button" onClick={onKeSirkulasi} className={kelasTombolKecil.garis}>
+                                        <button
+                                            type="button"
+                                            onClick={onKeSirkulasi}
+                                            className={`${kelasTombolKecil.garis} sm:w-full mt-2`}
+                                        >
                                             Proses pengembalian dulu
                                         </button>
                                     )}

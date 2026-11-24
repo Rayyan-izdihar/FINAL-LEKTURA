@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Check, Inbox, X } from 'lucide-react';
+import { CalendarDays, Check, Clock, Inbox, X } from 'lucide-react';
 import Avatar from '@/components/Avatar';
 import Dialog from '@/components/Dialog';
 import KondisiKosong from '@/components/KondisiKosong';
@@ -8,7 +8,7 @@ import Sampul from '@/components/Sampul';
 import StatusPil from '@/components/StatusPil';
 import { kirimAksi } from '@/lib/aksi';
 import { formatTanggal } from '@/lib/format';
-import { kelasInput, kelasPanel, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
+import { kelasAksi, kelasBaris, kelasInput, kelasPeminjam, kelasTombol, kelasTombolAksi, kelasTombolKecil } from '@/lib/gaya';
 
 // Antrean pengajuan pinjam. Pegawai memeriksa mahasiswa di meja sirkulasi, lalu Setujui atau Tolak.
 // onSelesai(hasil) dipanggil setelah aksi, supaya halaman induk menampilkan pesan dan memuat ulang data.
@@ -61,25 +61,35 @@ export default function AntreanPinjam({ daftar, onSelesai }) {
                     const tidakBisa = item.terblokir || stokHabis;
 
                     return (
-                        <li key={item.id} className={`${kelasPanel} flex flex-col gap-4 p-4 sm:flex-row sm:p-5`}>
-                            <Sampul src={item.sampul} judul={item.judul} className="w-16 shrink-0 self-start" />
+                        <li key={item.id} className={kelasBaris}>
+                            <Sampul src={item.sampul} judul={item.judul} className="w-20 shrink-0 self-start sm:w-24" />
 
                             <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2.5">
-                                    <Avatar nama={item.nama} ukuran={30} />
-                                    <span className="font-medium">{item.nama}</span>
-                                    <span className="text-xs text-abu">{item.nim}</span>
+                                <div className="flex items-center justify-between">
+                                    <span className={kelasPeminjam}>
+                                        <Avatar nama={item.nama} ukuran={26} />
+                                        <span className="font-medium">{item.nama}</span>
+                                        <span className="text-xs text-abu">{item.nim}</span>
+                                    </span>
+
+                                    <p className="flex items-center gap-1.5 text-xs text-abu">
+                                        <CalendarDays size={13} aria-hidden="true" />
+                                        Diajukan {formatTanggal(item.tanggal_pengajuan)}
+                                    </p>
                                 </div>
 
-                                <h3 className="mt-3 font-judul text-lg leading-snug">{item.judul}</h3>
+                                <h3 className="mt-4 font-judul text-xl leading-snug">{item.judul}</h3>
                                 <p className="text-sm text-tinta-lembut">{item.penulis}</p>
 
-                                <div className="mt-3 flex flex-wrap gap-2">
-                                    <StatusPil>Diajukan {formatTanggal(item.tanggal_pengajuan)}</StatusPil>
+                                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2">
                                     <StatusPil nada={stokHabis ? 'koral' : 'hijau'}>
                                         {stokHabis ? 'Stok habis' : `Stok tersedia ${item.stok_tersedia}`}
                                     </StatusPil>
-                                    <StatusPil>Lama pinjam {item.maksimal_pinjam} hari</StatusPil>
+
+                                    <span className="inline-flex items-center gap-1.5 text-xs text-abu">
+                                        <Clock size={13} aria-hidden="true" />
+                                        Lama pinjam {item.maksimal_pinjam} hari
+                                    </span>
                                 </div>
 
                                 {item.terblokir && (
@@ -89,12 +99,12 @@ export default function AntreanPinjam({ daftar, onSelesai }) {
                                 )}
                             </div>
 
-                            <div className="flex shrink-0 gap-2 sm:flex-col sm:justify-center">
+                            <div className={kelasAksi}>
                                 <button
                                     type="button"
                                     onClick={() => setujui(item)}
                                     disabled={tidakBisa || prosesId === item.id}
-                                    className={kelasTombolKecil.hijau}
+                                    className={`${kelasTombolKecil.hijau} ${kelasTombolAksi}`}
                                 >
                                     <Check size={14} aria-hidden="true" />
                                     {prosesId === item.id ? 'Memproses...' : 'Setujui'}
@@ -103,7 +113,7 @@ export default function AntreanPinjam({ daftar, onSelesai }) {
                                     type="button"
                                     onClick={() => bukaDialogTolak(item)}
                                     disabled={prosesId === item.id}
-                                    className={kelasTombolKecil.garis}
+                                    className={`${kelasTombolKecil.garis} ${kelasTombolAksi}`}
                                 >
                                     <X size={14} aria-hidden="true" />
                                     Tolak
