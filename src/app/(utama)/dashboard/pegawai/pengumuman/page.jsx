@@ -9,6 +9,7 @@ import StatusPil from '@/components/StatusPil';
 import { kirimAksi } from '@/lib/aksi';
 import { formatTanggal } from '@/lib/format';
 import { kelasPanel, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
+import { gayaKategori } from '@/lib/kategoriPengumuman';
 
 const kelasHapus =
     'inline-flex min-h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border border-koral/40 px-4 text-xs font-medium text-koral-tua transition-colors hover:bg-koral/10';
@@ -145,38 +146,48 @@ export default function KelolaPengumuman() {
 
             {tampil?.length > 0 && (
                 <ul className="grid gap-4 md:grid-cols-2">
-                    {tampil.map((p) => (
-                        <li key={p.id} className={`${kelasPanel} flex flex-col p-5`}>
-                            <div className="flex flex-wrap items-center gap-2">
-                                <StatusPil nada={p.status === 'Published' ? 'hijau' : 'kuning'}>{p.status}</StatusPil>
-                                <StatusPil>{p.kategori}</StatusPil>
-                                <time dateTime={p.tanggal_rilis} className="text-xs text-abu">
-                                    {formatTanggal(p.tanggal_rilis)}
-                                </time>
-                            </div>
+                    {tampil.map((p) => {
+                        const gaya = gayaKategori(p.kategori);
 
-                            <h2 className="mt-3 font-judul text-xl leading-snug">{p.judul}</h2>
-                            <p className="mt-1.5 line-clamp-2 text-sm text-tinta-lembut">{p.cuplikan}</p>
-                            <p className="mt-3 text-xs text-abu">Ditulis oleh {p.penulis}</p>
+                        return (
+                            <li key={p.id} className={`${kelasPanel} flex flex-col p-5`}>
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <StatusPil nada={p.status === 'Published' ? 'hijau' : 'kuning'}>{p.status}</StatusPil>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        <div className={`rounded-full px-2.5 py-1 text-xs font-medium ${gaya.latar}`}>
+                                            <p className={` ${gaya.teks}`}>
+                                                {p.kategori}
+                                            </p>
+                                        </div>
+                                        <time dateTime={p.tanggal_rilis} className="text-xs text-abu">
+                                            {formatTanggal(p.tanggal_rilis)}
+                                        </time>
+                                    </div>
+                                </div>
 
-                            <div className="mt-auto flex flex-wrap gap-2 pt-4">
-                                <Link href={`/dashboard/pegawai/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
-                                    <Pencil size={14} aria-hidden="true" />
-                                    Ubah
-                                </Link>
-                                {p.status === 'Published' && (
-                                    <Link href={`/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
-                                        <ExternalLink size={14} aria-hidden="true" />
-                                        Lihat
+                                <h2 className="mt-3 font-judul text-xl leading-snug">{p.judul}</h2>
+                                <p className="mt-1.5 line-clamp-2 text-sm text-tinta-lembut">{p.cuplikan}</p>
+                                <p className="mt-3 text-xs text-abu">Ditulis oleh {p.penulis}</p>
+
+                                <div className="mt-auto flex flex-wrap gap-2 pt-4">
+                                    <Link href={`/dashboard/pegawai/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
+                                        <Pencil size={14} aria-hidden="true" />
+                                        Ubah
                                     </Link>
-                                )}
-                                <button type="button" onClick={() => setDihapus(p)} className={kelasHapus}>
-                                    <Trash2 size={14} aria-hidden="true" />
-                                    Hapus
-                                </button>
-                            </div>
-                        </li>
-                    ))}
+                                    {p.status === 'Published' && (
+                                        <Link href={`/pengumuman/${p.id}`} className={kelasTombolKecil.garis}>
+                                            <ExternalLink size={14} aria-hidden="true" />
+                                            Lihat
+                                        </Link>
+                                    )}
+                                    <button type="button" onClick={() => setDihapus(p)} className={kelasHapus}>
+                                        <Trash2 size={14} aria-hidden="true" />
+                                        Hapus
+                                    </button>
+                                </div>
+                            </li>
+                        )
+                    })}
                 </ul>
             )}
 

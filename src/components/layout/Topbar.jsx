@@ -62,7 +62,7 @@ export default function Topbar({ user }) {
                                 {ambilInisial(user.nama)}
                             </span>
 
-                            <span className="hidden text-sm leading-tight sm:block">
+                            <span className="text-sm leading-tight block">
                                 <span className="block max-w-36 truncate font-medium">{user.nama}</span>
                                 <span className="block text-xs text-abu">{namaRole[user.role]}</span>
                             </span>

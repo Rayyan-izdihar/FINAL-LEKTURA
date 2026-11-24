@@ -7,9 +7,9 @@ import { query } from '@/lib/db';
 export async function GET() {
     try {
         const hasil = await query(
-            `SELECT c.id, c.nama, c.kode, COUNT(c.id) as total_buku
+            `SELECT c.id, c.nama, c.kode, COUNT(b.id) as total_buku
             FROM categories c
-            JOIN books b ON b.category_id = c.id
+            LEFT JOIN books b ON b.category_id = c.id
             GROUP BY c.id, c.nama
             ORDER BY c.nama ASC`
         );

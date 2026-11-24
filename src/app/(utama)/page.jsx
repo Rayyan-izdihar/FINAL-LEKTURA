@@ -27,7 +27,7 @@ export default function Beranda() {
 
     return (
         <div className="space-y-10 py-4 md:py-8">
-            <section className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:gap-12">
+            <section className="grid items-start gap-10 lg:grid-cols-[1.4fr_1.4fr] lg:gap-14">
                 <div>
                     <h1 className="font-judul text-4xl leading-tight md:text-5xl">
                         Temukan bacaan
@@ -70,7 +70,10 @@ export default function Beranda() {
                     </Link>
                 </div>
 
-                <aside aria-labelledby="judul-pengumuman" className="space-y-3">
+                <aside
+                    aria-labelledby="judul-pengumuman"
+                    className="w-full space-y-3 lg:max-w-xl lg:justify-self-end"
+                >
                     <div className="flex items-baseline justify-between">
                         <h2 id="judul-pengumuman" className="text-sm font-medium text-abu">
                             Pengumuman terbaru
