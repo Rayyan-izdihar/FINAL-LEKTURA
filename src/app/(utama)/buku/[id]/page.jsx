@@ -12,6 +12,7 @@ export default function DetailBuku() {
     const { id } = useParams(); // nilai [id] dari alamat, contoh /buku/3 -> "3"
     const [data, setData] = useState(null);
     const [status, setStatus] = useState('memuat'); // 'memuat' | 'ada' | 'tidak-ada' | 'galat'
+    const [batasUlasan, setBatasUlasan] = useState(6);
 
 
     // useCallback: fungsi ini juga dipanggil TombolPinjam setelah pengajuan berhasil, untuk memuat ulang.
@@ -119,30 +120,46 @@ export default function DetailBuku() {
                 </h2>
 
                 {ulasan.length === 0 ? (
-                    <p className="mt-4 text-sm text-tinta-lembut">
-                        Belum ada ulasan. Ulasan dapat ditulis setelah buku selesai dipinjam.
-                    </p>
+                        <p className="mt-4 text-sm text-tinta-lembut">
+                            Belum ada ulasan. Ulasan dapat ditulis setelah buku selesai dipinjam.
+                        </p>
                     ) : (
-                    <ul className="mt-4 grid gap-4 md:grid-cols-2 max-h-screen overflow-y-auto">
-                        {ulasan.map((u) => (
-                        <li key={u.id} className="rounded-2xl border border-garis bg-kertas p-5">
-                            <div className="flex items-center justify-between gap-3">
-                                <span className="font-medium">{u.nama}</span>
+                        <>
+                            <ul className="mt-4 grid gap-4 md:grid-cols-2">
+                                {ulasan.slice(0, batasUlasan).map((u) => (
+                                    <li key={u.id} className="rounded-2xl border border-garis bg-kertas p-5">
+                                        <div className="flex items-center justify-between gap-3">
+                                            <span className="font-medium">{u.nama}</span>
 
-                                <time dateTime={u.tanggal} className="text-xs text-abu">
-                                    {formatTanggal(u.tanggal)}
-                                </time>
-                            </div>
+                                            <time dateTime={u.tanggal} className="text-xs text-abu">
+                                                {formatTanggal(u.tanggal)}
+                                            </time>
+                                        </div>
 
-                            <div className="mt-1">
-                                <Bintang nilai={u.rating} />
-                            </div>
-                            
-                            {u.ulasan && <p className="mt-2 text-sm text-tinta-lembut">{u.ulasan}</p>}
-                        </li>
-                        ))}
-                    </ul>
-                )}
+                                        <div className="mt-1">
+                                            <Bintang nilai={u.rating} />
+                                        </div>
+
+                                        {u.ulasan && (
+                                            <p className="mt-2 text-sm text-tinta-lembut">
+                                                {u.ulasan}
+                                            </p>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+
+                            {ulasan.length > batasUlasan && (
+                                <button
+                                    type="button"
+                                    onClick={() => setBatasUlasan((jumlah) => jumlah + 4)}
+                                    className="mt-5 rounded-full border border-garis px-5 py-2.5 text-sm font-medium transition-colors hover:bg-kertas"
+                                >
+                                    Tampilkan ulasan lainnya
+                                </button>
+                            )}
+                        </>
+                    )}
             </section>
         </div>
     );
