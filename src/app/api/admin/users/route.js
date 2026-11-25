@@ -42,7 +42,14 @@ export async function GET(request) {
             `SELECT u.id, u.nama, u.email, u.nim, u.role, u.aktif
              FROM users u
              ${where}
-             ORDER BY u.nama ASC, u.id ASC
+             ORDER BY 
+                    CASE u.role
+                        WHEN 'admin' THEN 1
+                        WHEN 'pegawai' THEN 2
+                        WHEN 'mahasiswa' THEN 3
+                        ELSE 4
+                    END ASC, 
+                u.nama ASC, u.id ASC
              LIMIT $${nilai.length + 1} OFFSET $${nilai.length + 2}`,
             [...nilai, limit, (halaman - 1) * limit]
         );
@@ -66,7 +73,6 @@ export async function GET(request) {
     }
 }
 
-
 // POST /api/admin/users
 // Menambah akun. Body JSON: { nama, email, nim, password, role }
 export async function POST(request) {
@@ -84,18 +90,19 @@ export async function POST(request) {
         // Password di-hash dulu, tidak pernah disimpan apa adanya
         const passwordHash = await bcrypt.hash(data.password, 10);
         const hasil = await query(
-            `INSERT INTO users (nama, email, password_hash, role)
-             VALUES ($1, $2, $3, $5)
+            `INSERT INTO users (nama, email, password_hash, nim, role)
+             VALUES ($1, $2, $3, $4, $5)
              RETURNING id`,
-            [data.nama, data.email, passwordHash, data.role]
+            [data.nama, data.email, passwordHash, data.nim, data.role]
         );
 
         return NextResponse.json({ pesan: `Akun ${data.nama} ditambahkan`, id: hasil.rows[0].id }, { status: 201 });
     } catch (error) {
         // 23505 = data ganda. error.constraint berisi nama aturan UNIQUE yang dilanggar.
         if (error.code === '23505') {
+            const nomorIdentitas = error.constraint?.includes('nim');
             return NextResponse.json(
-                { pesan: 'Email sudah dipakai akun lain' },
+                { pesan: nomorIdentitas ? 'Nomor identitas sudah dipakai akun lain' : 'Email sudah dipakai akun lain' },
                 { status: 409 }
             );
         }

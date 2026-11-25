@@ -169,7 +169,7 @@ export default function DashboardPegawai() {
                 />
             </section>
 
-            <section aria-label="Pintasan" className="grid gap-3 sm:grid-cols-2">
+            <section aria-label="Pintasan" className="grid gap-3 sm:grid-cols-2 mt-2">
                 {PINTASAN.map((p) => (
                     <Link
                         key={p.href}
@@ -195,7 +195,7 @@ export default function DashboardPegawai() {
             </section>
 
             <section>
-                <div role="tablist" aria-label="Pekerjaan pegawai" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+                <div role="tablist" aria-label="Pekerjaan pegawai" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2 mt-12">
                     {daftarTab.map((t) => (
                         <button
                             key={t.id}

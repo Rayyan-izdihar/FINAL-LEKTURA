@@ -15,8 +15,8 @@
 
 INSERT INTO users 
     (nama, email, password_hash, nim, role) 
-VALUES  ('Administrator',        'admin@kampus.ac.id',   '$2b$10$k4Z7vrr.H3q38w37qRd/GOCn7vaiXOgiXBJrr21zSVbQIqyteWLP2', NULL,         'admin'),
-        ('Petugas Perpustakaan', 'pegawai@kampus.ac.id', '$2b$10$5gJXuYAGEHw9klAohY.ufuIyPLwbw9X5kUmzP/YhnEmEsD2T4jCl2', NULL,         'pegawai'),
+VALUES  ('Administrator',        'admin@kampus.ac.id',   '$2b$10$k4Z7vrr.H3q38w37qRd/GOCn7vaiXOgiXBJrr21zSVbQIqyteWLP2', 'ADM001',     'admin'),
+        ('Petugas Perpustakaan', 'pegawai@kampus.ac.id', '$2b$10$5gJXuYAGEHw9klAohY.ufuIyPLwbw9X5kUmzP/YhnEmEsD2T4jCl2', 'PGW001',     'pegawai'),
         ('Nadia Putri',          'nadia@kampus.ac.id',   '$2b$10$3/P6p9g1QVvkE8LoQc8Ba.azCkfA1T2B.kGC9qqcojVcXcjhnvgFO', 'H071251001', 'mahasiswa'),  -- denda tertunggak (diblokir) + pengajuan perpanjangan
         ('Bima Pratama',         'bima@kampus.ac.id',    '$2b$10$vFySQeSmoV7EBiKVXYpiO.DzsvQh2KaheFVJuL.uiAN64pfRkrXPG', 'H071251002', 'mahasiswa'),  -- punya banyak status transaksi
         ('Citra Lestari',        'citra@kampus.ac.id',   '$2b$10$ykKs0n.n1uWpS8XL5d6h/Ozvh3xEDAps9xENa9E/LY1P/eWewQix.', 'H071251003', 'mahasiswa'),  -- akun bersih, bisa meminjam; ada ulasan yang belum ditulis

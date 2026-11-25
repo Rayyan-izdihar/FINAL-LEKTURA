@@ -6,7 +6,7 @@ CREATE TABLE users (
     nama VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    nim VARCHAR(30) UNIQUE,
+    nim VARCHAR(30) NOT NULL UNIQUE,
     role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'pegawai', 'mahasiswa')),
     aktif BOOLEAN NOT NULL DEFAULT TRUE
 );

@@ -111,7 +111,7 @@ export default function DashboardAdmin() {
     const totalTransaksi = jumlahStatus.reduce((total, p) => total + p.jumlah, 0);
 
     return (
-        <div className="space-y-8 py-4 md:py-8">
+        <div className="space-y-12 py-4 md:py-8">
             <section className="relative overflow-hidden rounded-3xl bg-tinta p-6 text-krem md:p-10">
                 <div aria-hidden="true" className="absolute -right-12 -top-20 size-64 rounded-full bg-koral" />
                 <div aria-hidden="true" className="absolute -bottom-24 right-32 size-52 rounded-full bg-krem/10" />

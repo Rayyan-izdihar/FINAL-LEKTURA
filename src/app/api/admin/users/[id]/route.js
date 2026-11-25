@@ -14,7 +14,6 @@ export async function POST(request, { params }) {
             return NextResponse.json({ pesan: 'Akun kamu dinonaktifkan' }, { status: 403 });
         }
 
-        
         const { id } = await params;
         if (!Number.isInteger(Number(id))) {
             return NextResponse.json({ pesan: 'Akun tidak ditemukan' }, { status: 404 });

@@ -47,6 +47,7 @@ export default function FormUser({ pengguna, saya, onSukses, onBatal }) {
             : await kirimAksi('/api/admin/users', {
                   nama: form.nama,
                   email: form.email,
+                  nim: form.nim,
                   password: form.password,
                   role: form.role,
               });
@@ -84,8 +85,23 @@ export default function FormUser({ pengguna, saya, onSukses, onBatal }) {
                 />
             </KolomForm>
 
-            {!ubah && (
-                <div className="grid gap-4">
+            <div className={`grid gap-4 ${form.role === 'mahasiswa' ? '' : "sm:grid-cols-2"}`}>
+                <KolomForm
+                    label="NIM / nomor identitas"
+                    petunjuk={ubah ? 'Tidak dapat diubah.' : 'Harus unik.'}
+                >
+                    <input
+                        name="nim"
+                        value={form.nim}
+                        onChange={ubahInput}
+                        readOnly={ubah}
+                        maxLength={30}
+                        required={!ubah}
+                        className={`${kelasInput} read-only:bg-tinta/5 read-only:text-abu`}
+                    />
+                </KolomForm>
+
+                {form.role !== 'mahasiswa' && 
                     <KolomForm label="Peran">
                         <select
                             name="role"
@@ -98,20 +114,22 @@ export default function FormUser({ pengguna, saya, onSukses, onBatal }) {
                             <option value="admin">Admin</option>
                         </select>
                     </KolomForm>
+                }
+            </div>
 
-                    <KolomForm label="Password" petunjuk="Minimal 8 karakter.">
-                        <input
-                            name="password"
-                            type="password"
-                            autoComplete="new-password"
-                            value={form.password}
-                            onChange={ubahInput}
-                            minLength={8}
-                            required
-                            className={kelasInput}
-                        />
-                    </KolomForm>
-                </div>
+            {!ubah && (
+                <KolomForm label="Password" petunjuk="Minimal 8 karakter.">
+                    <input
+                        name="password"
+                        type="password"
+                        autoComplete="new-password"
+                        value={form.password}
+                        onChange={ubahInput}
+                        minLength={8}
+                        required
+                        className={kelasInput}
+                    />
+                </KolomForm>
             )}
 
             {ubah && (

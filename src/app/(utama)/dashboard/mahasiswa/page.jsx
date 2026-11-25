@@ -35,7 +35,7 @@ function BarisRiwayat({ p }) {
                     <p className="mt-0.5 text-xs text-koral-tua">Alasan: {p.alasan_penolakan}</p>
                 )}
                 {selesai && p.status_denda !== 'Tidak Ada' && (
-                    <p className="mt-0.5 text-xs text-tinta-lembut">
+                    <p className="mt-0.5 text-xs text-koral">
                         Terlambat {p.hari_terlambat} hari, denda {formatRupiah(p.denda)}
                     </p>
                 )}
