@@ -179,7 +179,7 @@ export default function LaporanAdmin() {
                     Unduh data
                 </h2>
                 <p className="mt-1 text-sm text-tinta-lembut">
-                    Format CSV, bisa dibuka di Excel atau Google Sheets. Rentang tanggal memakai tanggal pengajuan.
+                    Format Excel, bisa dibuka di Excel atau Google Sheets. Rentang tanggal memakai tanggal pengajuan.
                 </p>
 
                 <div className="mt-4 flex flex-wrap items-end gap-3">
@@ -239,14 +239,14 @@ export default function LaporanAdmin() {
                             </div>
 
                             <div className="mt-5 flex items-center justify-between gap-3 border-t border-dashed border-garis pt-4">
-                                <span className="text-xs text-abu">CSV, UTF-8</span>
+                                <span className="text-xs text-abu">Excel, UTF-8</span>
                                 {rentangTerbalik ? (
                                     <button type="button" disabled className={kelasTombol.gelap}>
-                                        <Download size={16} aria-hidden="true" /> Unduh CSV
+                                        <Download size={16} aria-hidden="true" /> Unduh Excel
                                     </button>
                                 ) : (
                                     <a href={`${b.href}${sufiks}`} download className={kelasTombol.gelap}>
-                                        <Download size={16} aria-hidden="true" /> Unduh CSV
+                                        <Download size={16} aria-hidden="true" /> Unduh Excel
                                     </a>
                                 )}
                             </div>

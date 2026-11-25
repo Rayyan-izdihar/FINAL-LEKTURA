@@ -49,7 +49,7 @@ export async function GET() {
              LIMIT 6`
         );
 
-        // Tiga jenis denda. Aturannya sama dengan file CSV rekap denda.
+        // Tiga jenis denda. Aturannya sama dengan file Excel rekap denda.
         const denda = await query(
             `SELECT 'lunas' AS jenis, COUNT(*)::int AS jumlah, COALESCE(SUM(jumlah_denda), 0) AS nominal
              FROM loans WHERE status_denda = 'Lunas'

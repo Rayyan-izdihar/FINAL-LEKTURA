@@ -62,7 +62,7 @@ const MENU = [
         href: '/dashboard/admin/laporan',
         ikon: FileSpreadsheet,
         judul: 'Laporan',
-        teks: 'Analitik singkat dan unduh data CSV.',
+        teks: 'Analitik singkat dan unduh data Excel.',
         bulat: 'bg-hijau-muda text-hijau',
     },
 ];
