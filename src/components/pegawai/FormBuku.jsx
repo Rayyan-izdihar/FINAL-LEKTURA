@@ -129,7 +129,12 @@ export default function FormBuku({ bukuId }) {
         Object.entries(form).forEach(([nama, nilai]) => {
             if (nama !== 'sampul') kiriman.append(nama, nilai);
         });
-        if (berkas) kiriman.append('berkas', berkas);
+
+        if (berkas) {
+            kiriman.append('berkas', berkas);
+        } else if (form.sampul.trim()) {
+            kiriman.append('sampul', form.sampul.trim());
+        }
 
         const url = ubah ? `/api/pegawai/buku/${bukuId}` : '/api/pegawai/buku';
         const hasil = await kirimAksi(url, kiriman);

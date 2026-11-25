@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { cekAkses } from '@/lib/auth';
 import { akunAktif } from '@/lib/peminjaman';
-import { validasiPengumuman } from '@/lib/validasi';
+import { validasiPengumuman } from '@/lib/validasiPegawai';
 
 // GET /api/pegawai/pengumuman/5
 // Satu pengumuman lengkap (termasuk Draft), untuk mengisi formulir edit.

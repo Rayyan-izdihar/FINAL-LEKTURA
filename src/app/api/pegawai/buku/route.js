@@ -3,7 +3,7 @@ import { dalamTransaksi, query } from '@/lib/db';
 import { cekAkses } from '@/lib/auth';
 import { akunAktif } from '@/lib/peminjaman';
 import { bacaBerkasSampul, simpanSampul } from '@/lib/sampul';
-import { validasiBuku } from '@/lib/validasi';
+import { validasiBuku } from '@/lib/validasiPegawai';
 
 // POST /api/pegawai/buku
 // Menambah buku baru. Body berupa FormData: isian formulir buku + berkas gambar sampul (kolom `berkas`, boleh kosong).

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { cekAkses } from '@/lib/auth';
 import { akunAktif } from '@/lib/peminjaman';
-import { validasiPengumuman } from '@/lib/validasi';
+import { validasiPengumuman } from '@/lib/validasiPegawai';
 
 // GET /api/pegawai/pengumuman
 // Semua pengumuman termasuk yang masih Draft (berbeda dengan /api/announcements yang hanya Published).

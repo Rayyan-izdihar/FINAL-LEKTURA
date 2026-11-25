@@ -3,7 +3,7 @@ import { dalamTransaksi } from '@/lib/db';
 import { cekAkses } from '@/lib/auth';
 import { akunAktif } from '@/lib/peminjaman';
 import { bacaBerkasSampul, simpanSampul } from '@/lib/sampul';
-import { validasiBuku } from '@/lib/validasi';
+import { validasiBuku } from '@/lib/validasiPegawai';
 
 // POST /api/pegawai/buku/5
 // Mengubah data buku. ISBN tidak bisa diubah.
