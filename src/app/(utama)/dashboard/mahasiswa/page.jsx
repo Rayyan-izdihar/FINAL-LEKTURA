@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { TriangleAlert } from 'lucide-react';
-import KartuPinjaman from '@/components/KartuPinjaman';
+import KartuPinjaman from '@/components/mahasiswa/KartuPinjaman';
+import NotifikasiMahasiswa from '@/components/mahasiswa/NotifikasiMahasiswa';
 import Sampul from '@/components/Sampul';
 import StatusPil from '@/components/StatusPil';
 import { kelasPanel, kelasTombol, kelasTombolKecil } from '@/lib/gaya';
@@ -201,7 +202,7 @@ export default function DashboardMahasiswa() {
                 )}
             </section>
 
-            {/* Bagian notifikasi (id="notifikasi") ditambahkan di bagian 7 */}
+            <NotifikasiMahasiswa />
 
             <section aria-labelledby="judul-riwayat">
                 <h2 id="judul-riwayat" className="font-judul text-2xl">

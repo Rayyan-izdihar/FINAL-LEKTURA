@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
+import Lonceng from './Lonceng';
 import { kelasTombol } from '@/lib/gaya';
 
 const namaRole = { admin: 'Admin', pegawai: 'Pegawai', mahasiswa: 'Mahasiswa' };
@@ -43,15 +44,9 @@ export default function Topbar({ user }) {
                 )}
 
                 <div className="ml-auto flex items-center gap-3">
-                    {user?.role === 'mahasiswa' && (
-                        <Link
-                            href="/dashboard/mahasiswa#notifikasi"
-                            aria-label="Notifikasi"
-                            className="flex size-11 items-center justify-center rounded-full text-tinta-lembut hover:bg-tinta/5"
-                        >
-                            <Bell size={20} aria-hidden="true" />
-                        </Link>
-                    )}
+                    {user?.role === 'mahasiswa' &&
+                        <Lonceng />
+                    }
 
                     {user && (
                         <div className="flex items-center gap-2">
