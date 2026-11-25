@@ -2,10 +2,12 @@ import { NextResponse } from 'next/server';
 import { dalamTransaksi } from '@/lib/db';
 import { cekAkses } from '@/lib/auth';
 import { akunAktif } from '@/lib/peminjaman';
+import { bacaBerkasSampul, simpanSampul } from '@/lib/sampul';
 import { validasiBuku } from '@/lib/validasi';
 
 // POST /api/pegawai/buku/5
 // Mengubah data buku. ISBN tidak bisa diubah.
+// Body berupa FormData. Gambar sampul (kolom `berkas`) hanya diganti kalau ada berkas baru.
 // Stok total boleh diubah, tetapi tidak boleh kurang dari jumlah eksemplar yang sedang dipinjam.
 export async function POST(request, { params }) {
     try {
@@ -22,9 +24,14 @@ export async function POST(request, { params }) {
             return NextResponse.json({ pesan: 'Buku tidak ditemukan' }, { status: 404 });
         }
 
-        const body = await request.json().catch(() => null);
-        const { data, pesan } = validasiBuku(body, { ubah: true });
+        const form = await request.formData().catch(() => null);
+        if (!form) return NextResponse.json({ pesan: 'Data yang dikirim tidak valid' }, { status: 400 });
+
+        const { data, pesan } = validasiBuku(Object.fromEntries(form), { ubah: true });
         if (pesan) return NextResponse.json({ pesan }, { status: 400 });
+
+        const { sampul, pesan: pesanSampul } = await bacaBerkasSampul(form.get('berkas'));
+        if (pesanSampul) return NextResponse.json({ pesan: pesanSampul }, { status: 400 });
 
 
         const hasil = await dalamTransaksi(async (db) => {
@@ -49,7 +56,7 @@ export async function POST(request, { params }) {
                 `UPDATE books
                  SET judul = $2, penulis = $3, penerbit = $4, tahun_terbit = $5, category_id = $6,
                      stok_total = $7, stok_tersedia = $7 - $11::int,
-                     maksimal_pinjam = $8, denda_per_hari = $9, sampul = $10
+                     maksimal_pinjam = $8, denda_per_hari = $9, sampul = COALESCE($10, sampul)
                  WHERE id = $1`,
                 [
                     id,
@@ -65,6 +72,9 @@ export async function POST(request, { params }) {
                     dipinjam,
                 ]
             );
+            // Ada gambar baru: simpan ke database dan perbarui alamat sampulnya
+            if (sampul) await simpanSampul(db, id, sampul);
+
             return { status: 200, pesan: `Buku "${data.judul}" diperbarui` };
         });
 

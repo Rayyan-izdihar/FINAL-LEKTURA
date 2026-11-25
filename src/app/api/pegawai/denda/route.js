@@ -4,8 +4,6 @@ import { cekAkses } from '@/lib/auth';
 import { polaCari } from '@/lib/pencarian';
 
 // GET /api/pegawai/denda?q=kata
-// Transaksi dengan status denda Tertunggak. Yang bukunya sudah dikembalikan tampil lebih dulu
-// karena nominalnya sudah pasti dan siap dicatat lunas.
 export async function GET(request) {
     try {
         const { error } = await cekAkses(['pegawai', 'admin']);
@@ -34,7 +32,9 @@ export async function GET(request) {
              FROM loans l
              JOIN users u ON u.id = l.user_id
              JOIN books b ON b.id = l.book_id
-             WHERE l.status_denda = 'Tertunggak' ${syaratCari}
+             WHERE (l.status_denda = 'Tertunggak'
+                    OR (l.status = 'Sedang Dipinjam' AND CURRENT_DATE > l.tanggal_jatuh_tempo))
+                   ${syaratCari}
              ORDER BY (l.status = 'Selesai') DESC, l.tanggal_jatuh_tempo ASC, l.id ASC`,
             nilai
         );

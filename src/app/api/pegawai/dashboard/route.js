@@ -16,7 +16,10 @@ export async function GET() {
                 (SELECT COUNT(*) FROM loans
                   WHERE status = 'Sedang Dipinjam' AND status_perpanjangan = 'Diajukan') AS perpanjangan,
                 (SELECT COUNT(*) FROM loans WHERE status = 'Sedang Dipinjam') AS aktif,
-                (SELECT COUNT(*) FROM loans WHERE status_denda = 'Tertunggak') AS tertunggak`
+                -- sama dengan daftar di tab Denda: sudah tercatat tertunggak, atau masih dipinjam tetapi lewat jatuh tempo
+                (SELECT COUNT(*) FROM loans
+                  WHERE status_denda = 'Tertunggak'
+                     OR (status = 'Sedang Dipinjam' AND CURRENT_DATE > tanggal_jatuh_tempo)) AS tertunggak`
         );
 
 

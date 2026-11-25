@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import KolomForm from '@/components/KolomForm';
 import Sampul from '@/components/Sampul';
 import { kirimAksi } from '@/lib/aksi';
@@ -33,13 +33,18 @@ export default function FormBuku({ bukuId }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Pratinjau sampul menunggu 0,5 detik setelah pegawai berhenti mengetik,
-    // supaya tidak berkedip dan tidak memuat gambar di setiap huruf.
-    const [sampulPratinjau, setSampulPratinjau] = useState('');
+    // Berkas sampul yang dipilih pegawai. Pratinjaunya dibuat dari berkas itu langsung (belum diunggah).
+    const [berkas, setBerkas] = useState(null);
+    const [pratinjauBerkas, setPratinjauBerkas] = useState('');
+    const [galatBerkas, setGalatBerkas] = useState('');
+    const [kunciInput, setKunciInput] = useState(0); // naik 1 untuk mengosongkan kolom pilih berkas
+
+    // Lepaskan alamat sementara milik pratinjau saat diganti atau saat halaman ditutup
     useEffect(() => {
-        const tunggu = setTimeout(() => setSampulPratinjau(form.sampul.trim()), 500);
-        return () => clearTimeout(tunggu);
-    }, [form.sampul]);
+        return () => {
+            if (pratinjauBerkas) URL.revokeObjectURL(pratinjauBerkas);
+        };
+    }, [pratinjauBerkas]);
 
 
     // Daftar kategori untuk pilihan
@@ -85,13 +90,49 @@ export default function FormBuku({ bukuId }) {
         setForm({ ...form, [e.target.name]: e.target.value });
     }
 
+    function pilihBerkas(e) {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Pemeriksaan awal di browser supaya pegawai langsung tahu. Server tetap memeriksa ulang.
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            setGalatBerkas('Gambar harus berformat JPG, PNG, atau WebP.');
+            kosongkanBerkas(false);
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            setGalatBerkas('Ukuran gambar maksimal 2 MB.');
+            kosongkanBerkas(false);
+            return;
+        }
+
+        setGalatBerkas('');
+        setBerkas(file);
+        setPratinjauBerkas(URL.createObjectURL(file));
+    }
+
+    function kosongkanBerkas(hapusGalat = true) {
+        if (hapusGalat) setGalatBerkas('');
+        setBerkas(null);
+        setPratinjauBerkas('');
+        setKunciInput((k) => k + 1);
+    }
+
     async function kirim(e) {
         e.preventDefault();
         setError('');
         setLoading(true);
 
+        // Formulir dengan berkas dikirim sebagai FormData. Alamat sampul lama tidak ikut dikirim:
+        // server hanya mengganti sampul kalau ada berkas baru.
+        const kiriman = new FormData();
+        Object.entries(form).forEach(([nama, nilai]) => {
+            if (nama !== 'sampul') kiriman.append(nama, nilai);
+        });
+        if (berkas) kiriman.append('berkas', berkas);
+
         const url = ubah ? `/api/pegawai/buku/${bukuId}` : '/api/pegawai/buku';
-        const hasil = await kirimAksi(url, form);
+        const hasil = await kirimAksi(url, kiriman);
         setLoading(false);
 
         if (!hasil.ok) {
@@ -277,13 +318,52 @@ export default function FormBuku({ bukuId }) {
                         <div className="sm:col-span-2">
                             <KolomForm
                                 label="Sampul"
-                                petunjuk="Path gambar di folder public (contoh /covers/bumi.svg) atau URL gambar (https://...)."
+                                petunjuk={
+                                    ubah && form.sampul
+                                        ? 'JPG, PNG, atau WebP, maksimal 2 MB. Kosongkan kalau sampul tidak ingin diganti.'
+                                        : 'JPG, PNG, atau WebP, maksimal 2 MB.'
+                                }
+                            >
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        key={kunciInput}
+                                        type="file"
+                                        name="berkas"
+                                        accept="image/jpeg,image/png,image/webp"
+                                        onChange={pilihBerkas}
+                                        className={`${kelasInput} min-w-0 cursor-pointer py-1.5 text-tinta-lembut file:mr-3 file:cursor-pointer file:rounded-full file:border-0 file:bg-tinta file:px-4 file:py-1.5 file:text-sm file:font-medium file:text-krem hover:file:bg-tinta-lembut`}
+                                    />
+
+                                    {berkas && (
+                                        <button
+                                            type="button"
+                                            onClick={() => kosongkanBerkas()}
+                                            aria-label="Batalkan pilihan gambar"
+                                            className={`${kelasTombol.garis} shrink-0 px-3`}
+                                        >
+                                            <X size={16} aria-hidden="true" />
+                                        </button>
+                                    )}
+                                </div>
+                            </KolomForm>
+
+                            {galatBerkas && (
+                                <p role="alert" className="mt-2 text-sm text-koral-tua">
+                                    {galatBerkas}
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="sm:col-span-2">
+                            <p className="text-tinta-lembut font-medium text-xs mb-4">Atau Masukkan URL</p>
+                            <KolomForm
+                                petunjuk="URL gambar (https://...)."
                             >
                                 <input
                                     name="sampul"
                                     value={form.sampul}
                                     onChange={ubahInput}
-                                    placeholder="/covers/nama-buku.svg"
+                                    placeholder="https://..."
                                     className={kelasInput}
                                 />
                             </KolomForm>
@@ -307,16 +387,18 @@ export default function FormBuku({ bukuId }) {
                     </div>
                 </div>
 
-                {/* Pratinjau sampul: ikut berubah saat path sampul diketik */}
+                {/* Pratinjau sampul: gambar yang baru dipilih, atau sampul buku saat ini kalau belum memilih */}
                 <aside className={`${kelasPanel} p-5 lg:sticky lg:top-24`}>
                     <p className="text-sm font-medium">Pratinjau sampul</p>
 
                     <div className="mt-4 flex justify-center">
-                        <Sampul src={sampulPratinjau} judul={form.judul || 'Judul buku'} className="w-40" />
+                        <Sampul src={pratinjauBerkas || form.sampul} judul={form.judul || 'Judul buku'} className="w-40" />
                     </div>
 
                     <p className="mt-4 text-xs text-abu">
-                        Kalau gambar tidak muncul, periksa penulisan path atau URL-nya.
+                        {berkas
+                            ? `Gambar baru: ${berkas.name}. Akan disimpan setelah kamu menekan tombol simpan.`
+                            : 'Pilih gambar untuk melihat pratinjaunya di sini.'}
                     </p>
                 </aside>
             </form>

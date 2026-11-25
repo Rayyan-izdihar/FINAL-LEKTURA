@@ -1,5 +1,5 @@
 const dasarTombol =
-    'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60';
+    'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-full px-5 text-sm font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 active:scale-95';
 
 export const kelasTombol = {
     gelap: `${dasarTombol} bg-tinta text-krem hover:bg-tinta-lembut`,
@@ -10,7 +10,7 @@ export const kelasTombol = {
 
 // Versi lebih kecil untuk tombol di dalam daftar dan kartu
 const dasarTombolKecil =
-    'inline-flex min-h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full px-4 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60';
+    'inline-flex min-h-9 cursor-pointer items-center justify-center gap-1.5 rounded-full px-4 text-xs font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60 active:scale-95';
 
 export const kelasTombolKecil = {
     gelap: `${dasarTombolKecil} bg-tinta text-krem hover:bg-tinta-lembut`,

@@ -3,10 +3,12 @@
 // termasuk saat server tidak bisa dihubungi, jadi pemanggil tidak perlu try/catch sendiri.
 export async function kirimAksi(url, body = {}) {
     try {
+        // FormData (formulir dengan berkas) dikirim apa adanya; browser mengatur Content-Type-nya sendiri
+        const adaBerkas = body instanceof FormData;
         const res = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body),
+            headers: adaBerkas ? undefined : { 'Content-Type': 'application/json' },
+            body: adaBerkas ? body : JSON.stringify(body),
         });
         const data = await res.json();
         return { ok: res.ok, pesan: data.pesan };

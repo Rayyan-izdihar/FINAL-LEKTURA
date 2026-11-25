@@ -33,6 +33,13 @@ CREATE TABLE books (
     sampul TEXT
 );
 
+-- Gambar sampul yang diunggah pegawai. Kolom books.sampul berisi alamat /api/sampul/<id>.
+CREATE TABLE book_covers (
+    book_id INTEGER PRIMARY KEY REFERENCES books(id) ON DELETE CASCADE,
+    tipe VARCHAR(20) NOT NULL CHECK (tipe IN ('image/jpeg', 'image/png', 'image/webp')),
+    data BYTEA NOT NULL
+);
+
 CREATE TABLE announcements (
     id SERIAL PRIMARY KEY,
     judul VARCHAR(200) NOT NULL,
