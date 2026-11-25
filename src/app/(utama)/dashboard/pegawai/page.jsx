@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowUpRight, BookOpen, CalendarClock, Hourglass, Library, Megaphone, Wallet } from 'lucide-react';
+import { ArrowUpRight, ArrowLeft, BookOpen, CalendarClock, Hourglass, Library, Megaphone, Wallet } from 'lucide-react';
 import AntreanPerpanjangan from '@/components/pegawai/AntreanPerpanjangan';
 import AntreanPinjam from '@/components/pegawai/AntreanPinjam';
 import MejaSirkulasi from '@/components/pegawai/MejaSirkulasi';
@@ -114,6 +114,15 @@ export default function DashboardPegawai() {
 
     return (
         <div className="space-y-8 py-4 md:py-8">
+            {data.role === 'admin' && (
+                <Link
+                    href="/dashboard/admin"
+                    className="inline-flex items-center gap-1.5 text-sm text-tinta-lembut hover:text-tinta"
+                >
+                    <ArrowLeft size={16} aria-hidden="true" /> Kembali ke dashboard Admin
+                </Link>
+            )}
+
             <section className="relative overflow-hidden rounded-3xl bg-tinta p-6 text-krem md:p-10">
                 <div aria-hidden="true" className="absolute -right-12 -top-20 size-64 rounded-full bg-koral" />
                 <div aria-hidden="true" className="absolute -bottom-24 right-32 size-52 rounded-full bg-krem/10" />

@@ -47,7 +47,6 @@ export default function FormUser({ pengguna, saya, onSukses, onBatal }) {
             : await kirimAksi('/api/admin/users', {
                   nama: form.nama,
                   email: form.email,
-                  nim: form.nim,
                   password: form.password,
                   role: form.role,
               });
@@ -85,50 +84,34 @@ export default function FormUser({ pengguna, saya, onSukses, onBatal }) {
                 />
             </KolomForm>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-                <KolomForm
-                    label="NIM / nomor identitas"
-                    petunjuk={ubah ? 'Tidak dapat diubah.' : 'Harus unik.'}
-                >
-                    <input
-                        name="nim"
-                        value={form.nim}
-                        onChange={ubahInput}
-                        readOnly={ubah}
-                        maxLength={30}
-                        required={!ubah}
-                        className={`${kelasInput} read-only:bg-tinta/5 read-only:text-abu`}
-                    />
-                </KolomForm>
-
-                <KolomForm label="Peran">
-                    <select
-                        name="role"
-                        value={form.role}
-                        onChange={ubahInput}
-                        disabled={akunSendiri}
-                        className={`${kelasInput} cursor-pointer disabled:bg-tinta/5 disabled:text-abu`}
-                    >
-                        <option value="mahasiswa">Mahasiswa</option>
-                        <option value="pegawai">Pegawai</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </KolomForm>
-            </div>
-
             {!ubah && (
-                <KolomForm label="Password" petunjuk="Minimal 8 karakter.">
-                    <input
-                        name="password"
-                        type="password"
-                        autoComplete="new-password"
-                        value={form.password}
-                        onChange={ubahInput}
-                        minLength={8}
-                        required
-                        className={kelasInput}
-                    />
-                </KolomForm>
+                <div className="grid gap-4">
+                    <KolomForm label="Peran">
+                        <select
+                            name="role"
+                            value={form.role}
+                            onChange={ubahInput}
+                            disabled={akunSendiri}
+                            className={`${kelasInput} cursor-pointer disabled:bg-tinta/5 disabled:text-abu`}
+                        >
+                            <option value="pegawai">Pegawai</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </KolomForm>
+
+                    <KolomForm label="Password" petunjuk="Minimal 8 karakter.">
+                        <input
+                            name="password"
+                            type="password"
+                            autoComplete="new-password"
+                            value={form.password}
+                            onChange={ubahInput}
+                            minLength={8}
+                            required
+                            className={kelasInput}
+                        />
+                    </KolomForm>
+                </div>
             )}
 
             {ubah && (

@@ -20,7 +20,7 @@ const TITIK = {
 export default function StatusPil({ nada = 'netral', children }) {
     return (
         <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${GAYA[nada]}`}
+            className={`inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${GAYA[nada]}`}
         >
             <span aria-hidden="true" className={`size-1.5 rounded-full ${TITIK[nada]}`} />
             {children}

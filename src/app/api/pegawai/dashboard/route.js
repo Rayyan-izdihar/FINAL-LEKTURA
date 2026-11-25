@@ -61,6 +61,7 @@ export async function GET() {
         const baris = ringkasan.rows[0];
         return NextResponse.json({
             nama: sesi.nama,
+            role: sesi.role,
             ringkasan: {
                 menunggu: Number(baris.menunggu),
                 perpanjangan: Number(baris.perpanjangan),

@@ -16,11 +16,10 @@ export function validasiUser(body, { ubah = false } = {}) {
     const nama = teks(body?.nama);
     const email = teks(body?.email).toLowerCase();
     const role = teks(body?.role);
-    const nim = teks(body?.nim);
     const password = (body?.password ?? '').toString();
 
     if (!nama || !email || !role) return { pesan: 'Semua data wajib diisi' };
-    if (!ubah && (!nim || !password)) return { pesan: 'Semua data wajib diisi' };
+    if (!ubah && !password) return { pesan: 'Semua data wajib diisi' };
 
     if (nama.length > 100) return { pesan: 'Nama maksimal 100 karakter' };
     if (email.length > 150 || !FORMAT_EMAIL.test(email)) return { pesan: 'Format email tidak valid' };
@@ -31,9 +30,8 @@ export function validasiUser(body, { ubah = false } = {}) {
         return { data: { nama, email, role, aktif: body.aktif } };
     }
 
-    if (nim.length > 30) return { pesan: 'Nomor identitas maksimal 30 karakter' };
     if (password.length < 8) return { pesan: 'Password minimal 8 karakter' };
-    return { data: { nama, email, role, nim, password } };
+    return { data: { nama, email, role, password } };
 }
 
 export function validasiKategori(body) {

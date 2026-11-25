@@ -84,19 +84,18 @@ export async function POST(request) {
         // Password di-hash dulu, tidak pernah disimpan apa adanya
         const passwordHash = await bcrypt.hash(data.password, 10);
         const hasil = await query(
-            `INSERT INTO users (nama, email, password_hash, nim, role)
-             VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO users (nama, email, password_hash, role)
+             VALUES ($1, $2, $3, $5)
              RETURNING id`,
-            [data.nama, data.email, passwordHash, data.nim, data.role]
+            [data.nama, data.email, passwordHash, data.role]
         );
 
         return NextResponse.json({ pesan: `Akun ${data.nama} ditambahkan`, id: hasil.rows[0].id }, { status: 201 });
     } catch (error) {
         // 23505 = data ganda. error.constraint berisi nama aturan UNIQUE yang dilanggar.
         if (error.code === '23505') {
-            const nomorIdentitas = error.constraint?.includes('nim');
             return NextResponse.json(
-                { pesan: nomorIdentitas ? 'Nomor identitas sudah dipakai akun lain' : 'Email sudah dipakai akun lain' },
+                { pesan: 'Email sudah dipakai akun lain' },
                 { status: 409 }
             );
         }
