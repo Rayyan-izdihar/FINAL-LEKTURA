@@ -2,14 +2,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { House, Library, Megaphone, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
+import { FileSpreadsheet, House, Library, Megaphone, LayoutDashboard, LogIn, LogOut } from 'lucide-react';
 import { logout } from '@/app/actions/auth';
 
-// Satu komponen, dua tampilan:
-// - layar lebar: sidebar ikon vertikal di kiri
-// - layar kecil: tab bar di bawah layar
-const kelasItem =
-  'flex min-h-12 min-w-16 flex-col items-center justify-center gap-0.5 rounded-2xl transition-colors md:size-11 md:min-h-0 md:min-w-0 md:rounded-full';
+const kelasItem = 'flex min-h-12 min-w-14 flex-col items-center justify-center gap-0.5 rounded-2xl transition-colors md:size-11 md:min-h-0 md:min-w-0 md:rounded-full';
 const kelasAktif = 'bg-koral text-white';
 const kelasBiasa = 'text-tinta-lembut hover:bg-tinta/5';
 
@@ -27,7 +23,6 @@ function Item({ href, label, Ikon, aktif, warna }) {
     );
 }
 
-// user: undefined = masih memuat, null = guest, objek = sudah login
 export default function Navigasi({ user }) {
     const pathname = usePathname();
 
@@ -47,14 +42,25 @@ export default function Navigasi({ user }) {
         },
     ];
 
-    // Menu Dashboard hanya muncul setelah login, tujuannya mengikuti role.
     if (user) {
+        const dihalamanLaporan = pathname.startsWith('/dashboard/admin/laporan');
+
         menu.push({
             href: `/dashboard/${user.role}`,
             label: 'Dashboard',
             Ikon: LayoutDashboard,
-            aktif: ['/dashboard', '/admin', '/pegawai'].some((awalan) => pathname.startsWith(awalan)),
+            aktif:
+                !dihalamanLaporan && ['/dashboard', '/admin', '/pegawai'].some((awalan) => pathname.startsWith(awalan)),
         });
+
+        if (user.role === 'admin') {
+            menu.push({
+                href: '/dashboard/admin/laporan',
+                label: 'Laporan',
+                Ikon: FileSpreadsheet,
+                aktif: dihalamanLaporan,
+            });
+        }
     }
 
     return (
@@ -82,7 +88,6 @@ export default function Navigasi({ user }) {
                 )}
 
                 {user && (
-                    // Logout memakai server action (src/app/actions/auth.js)
                     <form action={logout}>
                         <button
                             type="submit"

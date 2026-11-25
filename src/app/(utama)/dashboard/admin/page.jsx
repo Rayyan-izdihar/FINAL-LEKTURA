@@ -6,6 +6,7 @@ import {
     ArrowLeftRight,
     ArrowUpRight,
     BookOpen,
+    FileSpreadsheet,
     Layers,
     Library,
     Megaphone,
@@ -21,7 +22,6 @@ import { formatRupiah, formatTanggal } from '@/lib/format';
 import { kelasPanel } from '@/lib/gaya';
 import { DAFTAR_STATUS, NADA_STATUS, WARNA_BATANG } from '@/lib/statusTransaksi';
 
-// Panel navigasi utama admin. `bulat` = warna latar ikon (kelas ditulis utuh agar terbaca Tailwind).
 const MENU = [
     {
         href: '/dashboard/admin/users',
@@ -57,6 +57,13 @@ const MENU = [
         judul: 'Pengumuman',
         teks: 'Tulis kabar operasional, layanan, dan acara.',
         bulat: 'bg-tinta/10 text-tinta',
+    },
+    {
+        href: '/dashboard/admin/laporan',
+        ikon: FileSpreadsheet,
+        judul: 'Laporan',
+        teks: 'Analitik singkat dan unduh data CSV.',
+        bulat: 'bg-hijau-muda text-hijau',
     },
 ];
 
