@@ -7,7 +7,6 @@ import { formatTanggal } from '@/lib/format';
 
 // POST /api/pegawai/loans/12/perpanjangan/setujui
 // Status perpanjangan menjadi Disetujui dan jatuh tempo bertambah otomatis sebesar
-// lama pinjam buku itu. Tidak bisa disetujui kalau pinjamannya sudah lewat jatuh tempo.
 export async function POST(request, { params }) {
     try {
         const { sesi, error } = await cekAkses(['pegawai', 'admin']);
@@ -34,7 +33,7 @@ export async function POST(request, { params }) {
                    AND b.id = l.book_id
                    AND l.status = 'Sedang Dipinjam'
                    AND l.status_perpanjangan = 'Diajukan'
-                   AND CURRENT_DATE <= l.tanggal_jatuh_tempo
+                   AND l.tanggal_pengajuan_perpanjangan <= l.tanggal_jatuh_tempo
                  RETURNING l.id, l.user_id, b.judul,
                            to_char(l.tanggal_jatuh_tempo, 'YYYY-MM-DD') AS jatuh_tempo_baru`,
                 [id]
@@ -43,17 +42,17 @@ export async function POST(request, { params }) {
             if (ubah.rows.length === 0) {
                 const cari = await db.query(
                     `SELECT l.status, l.status_perpanjangan,
-                            (CURRENT_DATE > l.tanggal_jatuh_tempo) AS terlambat
+                            (l.tanggal_pengajuan_perpanjangan > l.tanggal_jatuh_tempo) AS diajukan_terlambat
                      FROM loans l WHERE l.id = $1`,
                     [id]
                 );
                 const baris = cari.rows[0];
 
                 if (!baris) return { status: 404, pesan: 'Transaksi tidak ditemukan' };
-                if (baris.status === 'Sedang Dipinjam' && baris.status_perpanjangan === 'Diajukan' && baris.terlambat) {
+                if (baris.status === 'Sedang Dipinjam' && baris.status_perpanjangan === 'Diajukan' && baris.diajukan_terlambat) {
                     return {
                         status: 409,
-                        pesan: 'Pinjaman sudah lewat jatuh tempo, perpanjangan tidak bisa disetujui. Tolak pengajuan atau proses pengembalian.',
+                        pesan: 'Pengajuan ini dikirim setelah jatuh tempo, jadi tidak bisa disetujui. Tolak pengajuan atau proses pengembalian.',
                     };
                 }
 

@@ -46,6 +46,9 @@ export default function AntreanPerpanjangan({ daftar, onSelesai }) {
         <>
             <ul className="space-y-4">
                 {daftar.map((item) => {
+                    // Pengajuan yang dikirim setelah jatuh tempo hanya bisa ditolak.
+                    // Yang dikirim tepat waktu tetap bisa disetujui walau sekarang sudah lewat jatuh tempo.
+                    const tidakBisaDisetujui = item.diajukan_terlambat;
                     const terlambat = item.hari_terlambat > 0;
 
                     return (
@@ -86,11 +89,18 @@ export default function AntreanPerpanjangan({ daftar, onSelesai }) {
                                     {item.alasan_perpanjangan ? `"${item.alasan_perpanjangan}"` : 'Tanpa alasan tertulis.'}
                                 </p>
 
-                                {terlambat && (
+                                {tidakBisaDisetujui && (
                                     <p className="mt-3 rounded-xl bg-koral/10 px-3 py-2 text-sm text-koral-tua">
-                                        <span className="font-medium">Terlambat {item.hari_terlambat} hari.</span> Sudah lewat
-                                        jatuh tempo, jadi perpanjangan tidak bisa disetujui. Tolak pengajuan atau proses
-                                        pengembalian di Meja sirkulasi.
+                                        <span className="font-medium">Dikirim setelah jatuh tempo.</span> Pengajuan ini tidak
+                                        bisa disetujui. Tolak pengajuan atau proses pengembalian di Meja sirkulasi.
+                                    </p>
+                                )}
+
+                                {!tidakBisaDisetujui && terlambat && (
+                                    <p className="mt-3 rounded-xl bg-kuning-muda px-3 py-2 text-sm text-kuning">
+                                        <span className="font-medium">Jatuh tempo sudah lewat {item.hari_terlambat} hari,</span>{' '}
+                                        tetapi pengajuan dikirim sebelum jatuh tempo sehingga tetap bisa disetujui. Kalau
+                                        ditolak, mahasiswa diberi tambahan 1 hari untuk mengembalikan buku.
                                     </p>
                                 )}
                             </div>
@@ -99,7 +109,7 @@ export default function AntreanPerpanjangan({ daftar, onSelesai }) {
                                 <button
                                     type="button"
                                     onClick={() => setujui(item)}
-                                    disabled={terlambat || prosesId === item.id}
+                                    disabled={tidakBisaDisetujui || prosesId === item.id}
                                     className={`${kelasTombolKecil.hijau} ${kelasTombolAksi}`}
                                 >
                                     <Check size={14} aria-hidden="true" />
@@ -126,7 +136,10 @@ export default function AntreanPerpanjangan({ daftar, onSelesai }) {
                     <div className="space-y-4">
                         <p className="text-sm text-tinta-lembut">
                             Perpanjangan <span className="font-medium text-tinta">{ditolak.judul}</span> oleh{' '}
-                            {ditolak.nama} akan ditolak. Jatuh tempo tetap {formatTanggal(ditolak.tanggal_jatuh_tempo)}.
+                            {ditolak.nama} akan ditolak.{' '}
+                            {ditolak.hari_terlambat > 0
+                                ? 'Karena jatuh tempo sudah lewat, mahasiswa diberi tambahan 1 hari untuk mengembalikan buku (jatuh tempo menjadi besok).'
+                                : `Jatuh tempo tetap ${formatTanggal(ditolak.tanggal_jatuh_tempo)}, denda dihitung mulai lewat tanggal itu.`}
                         </p>
 
                         <div className="flex justify-end gap-2">

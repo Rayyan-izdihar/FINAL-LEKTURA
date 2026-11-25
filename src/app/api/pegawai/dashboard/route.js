@@ -50,7 +50,8 @@ export async function GET() {
                     to_char(l.tanggal_jatuh_tempo, 'YYYY-MM-DD') AS tanggal_jatuh_tempo,
                     to_char(l.tanggal_jatuh_tempo + b.maksimal_pinjam, 'YYYY-MM-DD') AS jatuh_tempo_baru,
                     to_char(l.tanggal_pengajuan_perpanjangan, 'YYYY-MM-DD') AS tanggal_pengajuan_perpanjangan,
-                    GREATEST(CURRENT_DATE - l.tanggal_jatuh_tempo, 0) AS hari_terlambat
+                    GREATEST(CURRENT_DATE - l.tanggal_jatuh_tempo, 0) AS hari_terlambat,
+                    (l.tanggal_pengajuan_perpanjangan > l.tanggal_jatuh_tempo) AS diajukan_terlambat
              FROM loans l
              JOIN users u ON u.id = l.user_id
              JOIN books b ON b.id = l.book_id
@@ -61,7 +62,6 @@ export async function GET() {
         const baris = ringkasan.rows[0];
         return NextResponse.json({
             nama: sesi.nama,
-            role: sesi.role,
             ringkasan: {
                 menunggu: Number(baris.menunggu),
                 perpanjangan: Number(baris.perpanjangan),
