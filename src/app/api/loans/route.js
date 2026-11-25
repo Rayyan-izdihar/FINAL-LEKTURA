@@ -15,6 +15,7 @@ export async function GET() {
                     l.status, l.alasan_penolakan,
                     l.status_perpanjangan, l.alasan_perpanjangan,
                     l.status_denda, l.jumlah_denda,
+                    b.stok_tersedia,
                     to_char(l.tanggal_pengajuan, 'YYYY-MM-DD') AS tanggal_pengajuan,
                     to_char(l.tanggal_pinjam, 'YYYY-MM-DD') AS tanggal_pinjam,
                     to_char(l.tanggal_jatuh_tempo, 'YYYY-MM-DD') AS tanggal_jatuh_tempo,
@@ -48,7 +49,11 @@ export async function GET() {
             let denda = 0;
             if (baris.status === 'Sedang Dipinjam') denda = baris.hari_terlambat * tarif;
             if (baris.status === 'Selesai') denda = Number(baris.jumlah_denda);
-            return { ...baris, denda_per_hari: tarif, denda };
+            return {
+                ...baris,
+                denda_per_hari: tarif,
+                denda,
+            };
         });
 
         // Transaksi yang menjadi penyebab blokir, untuk kartu peringatan denda
