@@ -1,20 +1,20 @@
 import { query } from '@/lib/db';
 
-// Mencatat satu notifikasi untuk mahasiswa (tabel notifications).
-// Satu jenis notifikasi hanya boleh muncul sekali per transaksi (UNIQUE loan_id + tipe),
-// jadi kalau sudah ada, ON CONFLICT DO NOTHING membuatnya dilewati tanpa error.
+// Menyimpan satu notifikasi untuk mahasiswa.
+// Jika notifikasi dengan jenis yang sama sudah ada,
+// pesan diperbarui dan statusnya dikembalikan menjadi belum dibaca.
 //
-// Parameter kedua `db` dipakai saat dipanggil di dalam transaksi:
-//     await dalamTransaksi(async (db) => {
-//         ...
-//         await buatNotifikasi({ ... }, db);   // ikut berhasil/gagal bersama transaksi
-//     });
-// Di luar transaksi cukup: await buatNotifikasi({ ... });
+// Parameter kedua `db` digunakan saat fungsi dipanggil
+// di dalam transaksi agar perubahan ikut berhasil atau gagal bersama transaksi.
 export async function buatNotifikasi({ userId, loanId, tipe, pesan }, db = { query }) {
     await db.query(
         `INSERT INTO notifications (user_id, loan_id, tipe, pesan)
          VALUES ($1, $2, $3, $4)
-         ON CONFLICT (loan_id, tipe) DO NOTHING`,
+         ON CONFLICT (loan_id, tipe)
+         DO UPDATE SET
+             pesan = EXCLUDED.pesan,
+             dibaca = FALSE,
+             dibuat_pada = CURRENT_TIMESTAMP`,
         [userId, loanId, tipe, pesan]
     );
 }

@@ -17,7 +17,7 @@ INSERT INTO users
     (nama, email, password_hash, nim, role) 
 VALUES  ('Administrator',        'admin@kampus.ac.id',   '$2b$10$k4Z7vrr.H3q38w37qRd/GOCn7vaiXOgiXBJrr21zSVbQIqyteWLP2', 'ADM001',     'admin'),
         ('Petugas Perpustakaan', 'pegawai@kampus.ac.id', '$2b$10$5gJXuYAGEHw9klAohY.ufuIyPLwbw9X5kUmzP/YhnEmEsD2T4jCl2', 'PGW001',     'pegawai'),
-        ('Nadia Putri',          'nadia@kampus.ac.id',   '$2b$10$3/P6p9g1QVvkE8LoQc8Ba.azCkfA1T2B.kGC9qqcojVcXcjhnvgFO', 'H071251001', 'mahasiswa'),  -- denda tertunggak (diblokir) + pengajuan perpanjangan
+        ('Nadia Putri',          'nadia@kampus.ac.id',   '$2b$10$3/P6p9g1QVvkE8LoQc8Ba.azCkfA1T2B.kGC9qqcojVcXcjhnvgFO', 'H071251001', 'mahasiswa'),  -- terlambat 2 hari (denda berjalan, diblokir) + perpanjangan diajukan sebelum jatuh tempo
         ('Bima Pratama',         'bima@kampus.ac.id',    '$2b$10$vFySQeSmoV7EBiKVXYpiO.DzsvQh2KaheFVJuL.uiAN64pfRkrXPG', 'H071251002', 'mahasiswa'),  -- punya banyak status transaksi
         ('Citra Lestari',        'citra@kampus.ac.id',   '$2b$10$ykKs0n.n1uWpS8XL5d6h/Ozvh3xEDAps9xENa9E/LY1P/eWewQix.', 'H071251003', 'mahasiswa'),  -- akun bersih, bisa meminjam; ada ulasan yang belum ditulis
         ('Dimas Aditya',         'dimas@kampus.ac.id',   '$2b$10$O8KZXFPvMGlF4JJZhdjV.OVer9e01jXrbmXDTgNBfae615/eshYSG', 'H071251004', 'mahasiswa'),  -- pinjaman H-1 dan perpanjangan disetujui
@@ -113,18 +113,49 @@ VALUES  (3,  5, 'Buku menarik dan mudah dipahami.',                             
         (27, 5, 'Pengantar filsafat yang ringan dan relevan dengan kehidupan sehari-hari.', CURRENT_TIMESTAMP - INTERVAL '8 days');
 
 
-INSERT INTO notifications 
-    (user_id, loan_id, tipe, pesan, dibaca, dibuat_pada) 
-VALUES  (3, 1,  'denda_baru',             'Buku "Dasar-Dasar Pemrograman Web" melewati jatuh tempo. Denda mulai dihitung.',                           FALSE, CURRENT_TIMESTAMP - INTERVAL '2 days'),
-        (4, 4,  'pinjam_disetujui',       'Peminjaman buku "Bumi" telah disetujui.',                                                                  TRUE,  CURRENT_TIMESTAMP - INTERVAL '14 days'),
-        (3, 1,  'jatuh_tempo',            'Buku "Dasar-Dasar Pemrograman Web" jatuh tempo besok.',                                                    TRUE,  CURRENT_TIMESTAMP - INTERVAL '3 days'),
-        (6, 14, 'jatuh_tempo',            'Buku "Atomic Habits" jatuh tempo besok. Segera kembalikan atau ajukan perpanjangan.',                      FALSE, CURRENT_TIMESTAMP),
-        (6, 18, 'perpanjangan_disetujui', 'Perpanjangan buku "Bumi" disetujui. Masa pinjam bertambah 7 hari.',                                        FALSE, CURRENT_TIMESTAMP - INTERVAL '4 days'),
-        (5, 20, 'perpanjangan_ditolak',   'Perpanjangan buku "Bumi Manusia" ditolak. Kembalikan buku sebelum jatuh tempo.',                           FALSE, CURRENT_TIMESTAMP - INTERVAL '1 days'),
-        (5, 24, 'pinjam_ditolak',         'Pengajuan buku "Fisika Dasar Universitas" ditolak. Alasan: kartu identitas belum dibawa saat verifikasi.', FALSE, CURRENT_TIMESTAMP - INTERVAL '3 days'),
-        (8, 12, 'denda_baru',             'Buku "Dasar-Dasar Pemrograman Web" dikembalikan terlambat 4 hari. Denda Rp 4.000 belum lunas.',            FALSE, CURRENT_TIMESTAMP - INTERVAL '6 days'),
-        (4, 21, 'pinjam_disetujui',       'Peminjaman buku "Bumi Manusia" telah disetujui.',                                                          TRUE,  CURRENT_TIMESTAMP - INTERVAL '3 days');
-
+-- Notifikasi dibuat agar selaras dengan riwayat transaksi dan perilaku API.
+-- Notifikasi persetujuan: untuk semua pinjaman yang pernah disetujui.
+-- Notifikasi jatuh tempo: pengingat satu hari sebelum tanggal jatuh tempo.
+-- Notifikasi denda: untuk pinjaman yang melewati jatuh tempo atau buku yang dikembalikan terlambat.
+-- Pinjaman aktif diberi pengingat bahwa denda terus bertambah; setelah buku dikembalikan,
+-- pesan hanya menyebut status pelunasan tanpa nominal atau jumlah hari.
+INSERT INTO notifications
+    (user_id, loan_id, tipe, pesan, dibaca, dibuat_pada)
+VALUES
+    (3, 1, 'pinjam_disetujui', 'Peminjaman buku "Dasar-Dasar Pemrograman Web" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '9 days'),
+    (3, 3, 'pinjam_disetujui', 'Peminjaman buku "Laskar Pelangi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '19 days'),
+    (4, 4, 'pinjam_disetujui', 'Peminjaman buku "Bumi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '14 days'),
+    (5, 5, 'pinjam_disetujui', 'Peminjaman buku "Laskar Pelangi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '39 days'),
+    (6, 6, 'pinjam_disetujui', 'Peminjaman buku "Laskar Pelangi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '34 days'),
+    (8, 7, 'pinjam_disetujui', 'Peminjaman buku "Laskar Pelangi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '29 days'),
+    (7, 8, 'pinjam_disetujui', 'Peminjaman buku "Laskar Pelangi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '44 days'),
+    (4, 9, 'pinjam_disetujui', 'Peminjaman buku "Laskar Pelangi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '7 days'),
+    (5, 10, 'pinjam_disetujui', 'Peminjaman buku "Dasar-Dasar Pemrograman Web" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '24 days'),
+    (6, 11, 'pinjam_disetujui', 'Peminjaman buku "Dasar-Dasar Pemrograman Web" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '21 days'),
+    (8, 12, 'pinjam_disetujui', 'Peminjaman buku "Dasar-Dasar Pemrograman Web" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '17 days'),
+    (7, 13, 'pinjam_disetujui', 'Peminjaman buku "Dasar-Dasar Pemrograman Web" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '49 days'),
+    (6, 14, 'pinjam_disetujui', 'Peminjaman buku "Atomic Habits" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '6 days'),
+    (5, 15, 'pinjam_disetujui', 'Peminjaman buku "Atomic Habits" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '29 days'),
+    (4, 16, 'pinjam_disetujui', 'Peminjaman buku "Atomic Habits" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '27 days'),
+    (3, 17, 'pinjam_disetujui', 'Peminjaman buku "Atomic Habits" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '25 days'),
+    (6, 18, 'pinjam_disetujui', 'Peminjaman buku "Bumi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '11 days'),
+    (5, 19, 'pinjam_disetujui', 'Peminjaman buku "Bumi" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '32 days'),
+    (5, 20, 'pinjam_disetujui', 'Peminjaman buku "Bumi Manusia" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '5 days'),
+    (4, 21, 'pinjam_disetujui', 'Peminjaman buku "Bumi Manusia" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '3 days'),
+    (4, 25, 'pinjam_disetujui', 'Peminjaman buku "Algoritma dan Struktur Data" telah disetujui. Lama pinjam 14 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '19 days'),
+    (4, 26, 'pinjam_disetujui', 'Peminjaman buku "Pengantar Ilmu Hukum" telah disetujui. Lama pinjam 14 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '2 days'),
+    (6, 27, 'pinjam_disetujui', 'Peminjaman buku "Filosofi Teras" telah disetujui. Lama pinjam 7 hari.', TRUE, CURRENT_TIMESTAMP - INTERVAL '15 days'),
+    (3, 1, 'jatuh_tempo', 'Buku "Dasar-Dasar Pemrograman Web" jatuh tempo besok.', TRUE, CURRENT_TIMESTAMP - INTERVAL '3 days'),
+    (3, 1, 'denda_baru', 'Buku "Dasar-Dasar Pemrograman Web" telah melewati tanggal jatuh tempo. Denda akan terus bertambah selama buku belum dikembalikan.', FALSE, CURRENT_TIMESTAMP - INTERVAL '1 day'),
+    (4, 9, 'jatuh_tempo', 'Buku "Laskar Pelangi" jatuh tempo hari ini. Segera kembalikan agar tidak terkena denda.', FALSE, CURRENT_TIMESTAMP),
+    (6, 14, 'jatuh_tempo', 'Buku "Atomic Habits" jatuh tempo besok. Segera kembalikan atau ajukan perpanjangan.', FALSE, CURRENT_TIMESTAMP),
+    (4, 4, 'denda_baru', 'Buku "Bumi" telah dikembalikan setelah melewati tanggal jatuh tempo. Denda keterlambatan telah dilunasi.', TRUE, CURRENT_TIMESTAMP - INTERVAL '5 days'),
+    (6, 6, 'denda_baru', 'Buku "Laskar Pelangi" telah dikembalikan setelah melewati tanggal jatuh tempo. Denda keterlambatan telah dilunasi.', TRUE, CURRENT_TIMESTAMP - INTERVAL '25 days'),
+    (6, 11, 'denda_baru', 'Buku "Dasar-Dasar Pemrograman Web" telah dikembalikan setelah melewati tanggal jatuh tempo. Denda keterlambatan telah dilunasi.', TRUE, CURRENT_TIMESTAMP - INTERVAL '12 days'),
+    (8, 12, 'denda_baru', 'Buku "Dasar-Dasar Pemrograman Web" telah dikembalikan setelah melewati tanggal jatuh tempo. Denda keterlambatan masih menunggu pelunasan.', FALSE, CURRENT_TIMESTAMP - INTERVAL '6 days'),
+    (6, 18, 'perpanjangan_disetujui', 'Perpanjangan buku "Bumi" disetujui. Masa pinjam bertambah 7 hari.', FALSE, CURRENT_TIMESTAMP - INTERVAL '4 days'),
+    (5, 20, 'perpanjangan_ditolak', 'Perpanjangan buku "Bumi Manusia" ditolak. Kembalikan buku sebelum jatuh tempo.', FALSE, CURRENT_TIMESTAMP - INTERVAL '1 day'),
+    (5, 24, 'pinjam_ditolak', 'Pengajuan buku "Fisika Dasar Universitas" ditolak. Alasan: kartu identitas belum dibawa saat verifikasi.', FALSE, CURRENT_TIMESTAMP - INTERVAL '3 days');
 
 UPDATE loans
 SET status_perpanjangan = 'Diajukan',

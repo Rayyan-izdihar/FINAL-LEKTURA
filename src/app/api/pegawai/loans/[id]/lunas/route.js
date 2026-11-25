@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { cekAkses } from '@/lib/auth';
 import { akunAktif } from '@/lib/peminjaman';
+import { buatNotifikasi } from '@/lib/notifikasi';
 
 // POST /api/pegawai/loans/12/lunas
 // Pegawai mencatat denda dari Tertunggak menjadi Lunas.
@@ -42,12 +43,28 @@ export async function POST(request, { params }) {
                     { status: 409 }
                 );
             }
-            
+
             return NextResponse.json(
                 { pesan: 'Transaksi ini tidak memiliki denda tertunggak' },
                 { status: 409 }
             );
         }
+
+        // Ambil informasi peminjaman untuk memperbarui notifikasi mahasiswa.
+        const pinjaman = await query(
+            `SELECT l.user_id, b.judul
+             FROM loans l
+             JOIN books b ON b.id = l.book_id
+             WHERE l.id = $1`,
+            [id]
+        );
+
+        await buatNotifikasi({
+            userId: pinjaman.rows[0].user_id,
+            loanId: Number(id),
+            tipe: 'denda_baru',
+            pesan: `Buku "${pinjaman.rows[0].judul}" telah dikembalikan setelah melewati tanggal jatuh tempo. Denda keterlambatan telah dilunasi.`,
+        });
 
         return NextResponse.json({ pesan: 'Pelunasan denda dicatat' });
     } catch (error) {

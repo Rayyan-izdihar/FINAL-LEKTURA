@@ -71,7 +71,7 @@ export async function POST(request, { params }) {
                         userId: pinjaman.user_id,
                         loanId: pinjaman.id,
                         tipe: 'denda_baru',
-                        pesan: `Buku "${pinjaman.judul}" dikembalikan terlambat ${pinjaman.hari_terlambat} hari. Denda ${formatRupiah(denda)} ${bayarSekarang ? 'sudah dilunasi.' : 'belum lunas.'}`,
+                        pesan: `Buku "${pinjaman.judul}" telah dikembalikan setelah melewati tanggal jatuh tempo. ${bayarSekarang ? 'Denda keterlambatan telah dilunasi.' : 'Denda keterlambatan masih menunggu pelunasan.'}`,
                     },
                     db
                 );
